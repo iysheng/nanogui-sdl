@@ -58,6 +58,7 @@ using std::endl;
 
 using namespace sdlgui;
 
+/* 测试窗口类 */
 class TestWindow : public Screen
 {
 public:
@@ -65,14 +66,25 @@ public:
       : Screen( pwindow, Vector2i(rwidth, rheight), "SDL_gui Test")
       {
         {
-          auto& nwindow = window("Button demo", Vector2i{15, 15})
+          /* 按键测试的 demo  窗口,使用了模板函数和模板类 */
+          /*
+           * Window& window("Button demo", Vector2i{15, 15})
+           * return wdg<Window>("Button demo", Vector2i{15, 15})
+           *
+           * Window& wdg("Button demo", Vector2i{15, 15})
+           * {
+           *     Window *widget = new Window(this, "Button demo", Vector2i{15, 15})
+           *     return *widget;
+           * }
+           */
+          auto& nwindow = window("按键 demo", Vector2i{15, 15})
                             .withLayout<GroupLayout>();
 
-          nwindow.label("Push buttons", "sans-bold")._and()
+          nwindow.label("Push你好", "sans")._and()
                  .button("Plain button", [] { cout << "pushed!" << endl; })
                     .withTooltip("This is plain button tips");
 
-          nwindow.button("Styled", ENTYPO_ICON_ROCKET, [] { cout << "pushed!" << endl; })
+          nwindow.button("S你好", ENTYPO_ICON_ROCKET, [] { cout << "pushed!" << endl; })
                    .withBackgroundColor( Color(0, 0, 255, 25) );
 
           nwindow.label("Toggle buttons", "sans-bold")._and()
@@ -457,8 +469,9 @@ int main(int /* argc */, char ** /* argv */)
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    int winWidth = 1024;
-    int winHeight = 768;
+    int winWidth = 1280;
+    int winHeight = 800;
+    printf("w=%d h=%d\n", winWidth, winHeight);
 
     // Create an application window with the following settings:
     window = SDL_CreateWindow(
@@ -467,7 +480,7 @@ int main(int /* argc */, char ** /* argv */)
       SDL_WINDOWPOS_UNDEFINED,  //    int y: initial y position
       winWidth,                      //    int w: width, in pixels
       winHeight,                      //    int h: height, in pixels
-      SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN  | SDL_WINDOW_ALLOW_HIGHDPI        //    Uint32 flags: window options, see docs
+      SDL_WINDOW_FULLSCREEN | SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN  | SDL_WINDOW_ALLOW_HIGHDPI        //    Uint32 flags: window options, see docs
     );
 
     // Check that the window was successfully made
@@ -485,10 +498,12 @@ int main(int /* argc */, char ** /* argv */)
         strcat(rendername, info.name);
         strcat(rendername, " ");
     }
+    printf("rendername:%s\n", rendername);
 
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
+    /* 创建了测试窗口类 */
     TestWindow *screen = new TestWindow(window, winWidth, winHeight);
 
     Fps fps;

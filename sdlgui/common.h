@@ -361,6 +361,7 @@ namespace math
     }
 };
 
+/* 类模板, 模板类 */
 template <class T>
 class Vector2
 {

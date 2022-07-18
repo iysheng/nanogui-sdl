@@ -24,6 +24,7 @@ NAMESPACE_BEGIN(sdlgui)
  * \brief Represents a display surface (i.e. a full-screen or windowed GLFW window)
  * and forms the root element of a hierarchy of sdlgui widgets
  */
+/* screen 显示类 */
 class  Screen : public Widget
 {
     friend class Widget;
@@ -88,6 +89,7 @@ public:
     /// Compute the layout of all widgets
     void performLayout();
 
+    /* window 类模板 返回一个 Window 的引用 */
     template<typename... Args>Window& window(const Args&... args) { return wdg<Window>(args...); }
 public:
     /// Initialize the \ref Screen

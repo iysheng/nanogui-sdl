@@ -152,6 +152,7 @@ void Screen::drawAll()
   drawWidgets();
 }
 
+/* 绘制窗口 */
 void Screen::drawWidgets()
 {
     if (!mVisible)

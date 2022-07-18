@@ -178,6 +178,7 @@ public:
         return new WidgetClass(this, args...);
     }
 
+    /* 定义了一个模板函数 wdg */
     template<typename WidgetClass, typename... Args>
     WidgetClass& wdg(const Args&... args)
     {
@@ -301,6 +302,7 @@ public:
     template<typename... Args>Widget& boxlayout(const Args&... args) { return withLayout<BoxLayout>(args...); }
     template<typename... Args>ToolButton& toolbutton(const Args&... args) { return wdg<ToolButton>(args...); }
     template<typename... Args>PopupButton& popupbutton(const Args&... args) { return wdg<PopupButton>(args...); }
+    /* label 模板函数 */
     template<typename... Args>Label& label(const Args&... args) { return wdg<Label>(args...); }
     template<typename... Args>ProgressBar& progressbar(const Args&... args) { return wdg<ProgressBar>(args...); }
     template<typename... Args>DropdownBox& dropdownbox(const Args&... args) { return wdg<DropdownBox>(args...); }

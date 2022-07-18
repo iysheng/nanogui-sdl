@@ -13,6 +13,7 @@
 
 NAMESPACE_BEGIN(sdlgui)
 
+  /* Label 构造函数 */
 Label::Label(Widget *parent, const std::string &caption, const std::string &font, int fontSize)
     : Widget(parent), mCaption(caption), mFont(font)
 {
