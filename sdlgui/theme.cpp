@@ -93,14 +93,24 @@ TTF_Font* getFont(const char* fontname, size_t ptsize)
   {
     SDL_RWops* rw = nullptr;
     std::string tmpFontname = fontname;
-    if (tmpFontname == "sans")
-      rw = SDL_RWFromMem(roboto_regular_ttf, roboto_regular_ttf_size);
-    else if (tmpFontname == "sans-bold")
-      rw = SDL_RWFromMem(roboto_bold_ttf, roboto_bold_ttf_size);
-    else if (tmpFontname == "icons")
-      rw = SDL_RWFromMem(entypo_ttf, entypo_ttf_size);
 
     TTF_Font* newFont = TTF_OpenFontRW(rw, false, ptsize);
+
+    if (tmpFontname == "sans")
+    {
+      newFont = TTF_OpenFont("/opt/jari_kiss_assets/red_font.ttf", 15);
+    }
+    else if (tmpFontname == "sans-bold")
+    {
+      newFont = TTF_OpenFont("/opt/jari_kiss_assets/red_font.ttf", 15);
+      TTF_SetFontStyle(newFont, TTF_STYLE_BOLD);
+    }
+    else if (tmpFontname == "icons")
+    {
+      rw = SDL_RWFromMem(entypo_ttf, entypo_ttf_size);
+      newFont = TTF_OpenFontRW(rw, false, ptsize);
+    }
+
     internal::fonts[fullFontName] = newFont;
     font = newFont;
   }
