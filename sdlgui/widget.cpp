@@ -193,6 +193,7 @@ void Widget::addChild(int index, Widget * widget)
     mChildren.insert(mChildren.begin() + index, widget);
     widget->incRef();
     widget->setParent(this);
+	/* 关联 theme */
     widget->setTheme(mTheme);
 }
 

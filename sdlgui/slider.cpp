@@ -21,6 +21,7 @@
 
 NAMESPACE_BEGIN(sdlgui)
 
+	/* slider 的 AsyncTexture 结构体定义 */
 struct Slider::AsyncTexture
 {
   Texture tex;
@@ -53,7 +54,7 @@ struct Slider::AsyncTexture
 
       NVGpaint bg = nvgBoxGradient(
         ctx, 0, center.y - rh/2 + 1, ww, rh, 3, 3,
-        Color(0x00, 0xff, 0xff, enabled ? 32 : 10).toNvgColor(), Color(0, 0xff, 0xff, enabled ? 128 : 210).toNvgColor());
+        Color(0x00, 0xff, 0xff, enabled ? 132 : 110).toNvgColor(), Color(0, 0xff, 0xff, enabled ? 128 : 210).toNvgColor());
 
       nvgBeginPath(ctx);
       nvgRoundedRect(ctx, 0, center.y - rh/2 + 1, ww, rh, 2);
@@ -133,7 +134,7 @@ struct Slider::AsyncTexture
 
       nvgBeginPath(ctx);
       nvgCircle(ctx, knobPos.x, knobPos.y, kr / 2);
-      nvgFillColor(ctx, Color(150, enabled ? 255 : 100).toNvgColor());
+      nvgFillColor(ctx, Color(0,0xff,0xff, enabled ? 255 : 100).toNvgColor());
       nvgStrokePaint(ctx, knobReverse);
       nvgStroke(ctx);
       nvgFill(ctx);
@@ -183,6 +184,9 @@ Slider::Slider(Widget *parent, float value)
     mHighlightColor = Color(00, 0xff, 0xff, 0xff);
 }
 
+/*
+ * Layout 中会用到这个函数
+ * */
 Vector2i Slider::preferredSize(SDL_Renderer *) const
 {
   /* 定义了默认的 preferredSize 大小 */

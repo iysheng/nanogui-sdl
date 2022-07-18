@@ -44,8 +44,8 @@ Theme::Theme(SDL_Renderer *ctx) {
 
     mDropShadow                       = Color(32, 32, 32, 255);
     mTransparent                      = Color(0, 0);
-    mBorderDark                       = Color(29, 255);
-    mBorderLight                      = Color(92, 255);
+    mBorderDark                       = Color(0x5,0x1b,0x4a, 255);
+    mBorderLight                      = Color(0x80,0xcc,0xff, 255);
     mBorderMedium                     = Color(35, 255);
     mTextColor                        = Color(255, 160);
     mDisabledTextColor                = Color(255, 80);

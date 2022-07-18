@@ -63,7 +63,7 @@ struct SwitchBox::AsyncTexture
       }
 
       NVGpaint bg = nvgBoxGradient(ctx, startX, startY, widthX, heightY, 3, 3,
-        Color(0, enabled ? 32 : 10).toNvgColor(),
+        Color(0,0xff,0xff, enabled ? 132 : 110).toNvgColor(),
         Color(0, enabled ? 128 : 210).toNvgColor());
 
       nvgBeginPath(ctx);

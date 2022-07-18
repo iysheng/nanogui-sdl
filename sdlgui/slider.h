@@ -84,6 +84,7 @@ protected:
     std::function<void(Slider*,float)> mObjCallback;
     std::function<void(float)> mFinalCallback;
     std::pair<float, float> mRange;
+	/* std::pair 是一个数据类型 */
     std::pair<float, float> mHighlightedRange;
     Color mHighlightColor;
 
