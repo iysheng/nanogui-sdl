@@ -26,6 +26,9 @@ class  Slider : public Widget
 public:
     Slider(Widget *parent, float value = 0.f);
 
+    /*
+     * std::function 是一个函数包装模板
+     * */
     Slider(Widget *parent, float value, const std::function<void(Slider*, float)>& objcallback)
       : Slider(parent, value) { setObjCallback(objcallback); }
 

@@ -2435,6 +2435,7 @@ inline NVGcontext *nvgCreateRT(int flags, int w, int h, int clrColor) {
   for (size_t i = 0; i < rt->width * rt->height; i++)
     memcpy(rt->pixels + 4 * i, &clrColor, 4);
 
+  /* 初始化 ctx */
   ctx = nvgCreateInternal(&params);
   if (ctx == NULL)
     goto error;

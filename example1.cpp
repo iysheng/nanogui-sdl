@@ -1,6 +1,6 @@
 /*
-    sdlgui/example1.cpp -- C++ version of an example application that shows 
-    how to use the various widget classes. 
+    sdlgui/example1.cpp -- C++ version of an example application that shows
+    how to use the various widget classes.
 
     Based on NanoGUI by Wenzel Jakob <wenzel@inf.ethz.ch>.
     Adaptation for SDL by Dalerank <dalerankn8@gmail.com>
@@ -77,62 +77,64 @@ public:
            *     return *widget;
            * }
            */
-          auto& nwindow = window("按键 demo", Vector2i{15, 15})
+          /* auto& 表示这个变量可能被推导为引用变量 */
+          auto& nwindow = window("按键demo", Vector2i{15, 15})
                             .withLayout<GroupLayout>();
 
-          nwindow.label("Push你好", "sans")._and()
+          nwindow.label("复位按键", "sans")._and()
                  .button("Plain button", [] { cout << "pushed!" << endl; })
-                    .withTooltip("This is plain button tips");
+                    .withTooltip("这是一个普通的按键");
 
-          nwindow.button("S你好", ENTYPO_ICON_ROCKET, [] { cout << "pushed!" << endl; })
+          nwindow.button("格式按键", ENTYPO_ICON_ROCKET, [] { cout << "pushed!" << endl; })
                    .withBackgroundColor( Color(0, 0, 255, 25) );
 
           nwindow.label("Toggle buttons", "sans-bold")._and()
                  .button("Toggle me", [](bool state) { cout << "Toggle button state: " << state << endl; })
                     .withFlags(Button::ToggleButton);
 
-          nwindow.label("Radio buttons", "sans-bold")._and()
-                 .button("Radio button 1")
+          nwindow.label("单选按键", "sans-bold")._and()
+                 .button("单选按键1")
                     .withFlags(Button::RadioButton);
 
-          nwindow.button("Radio button 2")
+          nwindow.button("单选按键2")
                     .withFlags(Button::RadioButton)._and()
-                 .label("A tool palette", "sans-bold");
+                 .label("工具集面板", "sans-bold");
 
           auto& tools = nwindow.widget().boxlayout(Orientation::Horizontal, Alignment::Middle, 0, 6);
 
           tools.toolbutton(ENTYPO_ICON_CLOUD)._and()
                .toolbutton(ENTYPO_ICON_FF)._and()
                .toolbutton(ENTYPO_ICON_COMPASS)._and()
-               .toolbutton(ENTYPO_ICON_INSTALL);  
+               .toolbutton(ENTYPO_ICON_INSTALL);
 
-          nwindow.label("Popup buttons", "sans-bold")._and()
-                 .popupbutton("Popup", ENTYPO_ICON_EXPORT)
+          nwindow.label("弹出按键", "sans-bold")._and()
+                 .popupbutton("弹出", ENTYPO_ICON_EXPORT)
                     .popup()
                       .withLayout<GroupLayout>()
                          .label("Arbitrary widgets can be placed here")._and()
                          .checkbox("A check box")._and()
-                      .popupbutton("Recursive popup", ENTYPO_ICON_FLASH).popup()
+                      .popupbutton("递归弹出", ENTYPO_ICON_FLASH).popup()
                          .withLayout<GroupLayout>()
-                           .checkbox("Another check box");
+                           .checkbox("复选框");
         }
 
+        /* 基础窗口测试 */
         ListImages images = loadImageDirectory(SDL_GetRenderer(pwindow), "icons");
 
         {
-          auto& pwindow = window("Basic widgets", Vector2i{ 200, 15 }).withLayout<GroupLayout>();
-                          
+          auto& pwindow = window("基础装饰", Vector2i{ 200, 15 }).withLayout<GroupLayout>();
+
           pwindow.label("Message dialog", "sans-bold")._and()
                  .widget()
                     .boxlayout(Orientation::Horizontal,Alignment::Middle, 0, 6)
-                      .button("Info", [&] {
+                      .button("信息", [&] {
                             msgdialog(MessageDialog::Type::Information, "Title", "This is an information message",
                                       [](int result) { cout << "Dialog result: " << result << endl; }); })._and()
-                      .button("Warn", [&] {
+                      .button("警告", [&] {
                             msgdialog(MessageDialog::Type::Warning, "Title", "This is a warning message",
                                       [](int result) { cout << "Dialog result: " << result << endl; }); })._and()
-                      .button("Ask", [&] {
-                            msgdialog(MessageDialog::Type::Warning, "Title", "This is a question message", 
+                      .button("询问", [&] {
+                            msgdialog(MessageDialog::Type::Warning, "Title", "This is a question message",
                                       "Yes", "No", true, [](int result) { cout << "Dialog result: " << result << endl; }); });
 
           pwindow.label("Image panel & scroll panel", "sans-bold");
@@ -144,7 +146,7 @@ public:
 
           auto& img_window = window("Selected image", Vector2i(675, 15));
           img_window.withLayout<GroupLayout>();
-          
+
           auto imageView = img_window.add<ImageView>(mImagesData[0]);
 
           imagePanelBtn.popup(Vector2i(245, 150))
@@ -161,7 +163,7 @@ public:
 
 
           // Change the active textures.
-          
+
           imageView->setGridThreshold(20);
           imageView->setPixelInfoThreshold(20);
           imageView->setPixelInfoCallback(
@@ -176,7 +178,7 @@ public:
 
                 std::string stringData;
                 uint16_t channelSum = 0;
-                for (int i = 0; i != 4; ++i) 
+                for (int i = 0; i != 4; ++i)
                 {
                     uint8_t *data = (uint8_t*)imageData;
                     auto& channelData = data[4*index.y*w + 4*index.x + i];
@@ -204,8 +206,11 @@ public:
                               });
 
           pwindow.label("Combo box", "sans-bold")._and()
+                         /* 下拉框 */
                  .dropdownbox(std::vector<std::string>{ "Dropdown item 1", "Dropdown item 2", "Dropdown item 3" })._and()
+                         /* 组合框 */
                  .combobox(std::vector<std::string>{ "Combo box item 1", "Combo box item 2", "Combo box item 3"})._and()
+
                  .label("Check box", "sans-bold")._and()
                  .checkbox("Flag 1", [](bool state) { cout << "Check box 1 state: " << state << endl; })
                      .withChecked(true)._and()
@@ -214,11 +219,14 @@ public:
                  .progressbar().withId("progressbar")._and()
                  .label("Slider and text box", "sans-bold")._and()
                  .widget().withLayout<BoxLayout>(Orientation::Horizontal, Alignment::Middle, 0, 20)
+                 /* 滑杆,滑动条
+                  * [] 表示什么意思???
+                  * */
                     .slider(0.5f, [](Slider* obj, float value) {
                       if (auto* textBox = obj->gfind<TextBox>("slider-textbox"))
                         textBox->setValue(std::to_string((int)(value * 100)));
                     }, [](float value) { cout << "Final slider value: " << (int)(value * 100) << endl; })
-                        .withFixedWidth(80)._and()
+                        ._and()
                  .textbox("50", "%").withAlignment(TextBox::Alignment::Right)
                     .withId("slider-textbox")
                     .withFixedSize(Vector2i(60, 25))
@@ -406,6 +414,7 @@ public:
     {
       if (auto pbar = gfind<ProgressBar>("progressbar"))
       {
+        /* 更新 progressbar 进度条更新 */
         pbar->setValue(pbar->value() + 0.001f);
         if (pbar->value() >= 1.f)
           pbar->setValue(0.f);
@@ -524,7 +533,7 @@ int main(int /* argc */, char ** /* argv */)
                 }
                 screen->onEvent( e );
             }
-            
+
             SDL_SetRenderDrawColor(renderer, 0xd3, 0xd3, 0xd3, 0xff );
             SDL_RenderClear( renderer );
 

@@ -83,7 +83,7 @@ struct ProgressBar::AsyncTexture
       NVGpaint paint = nvgBoxGradient(
         ctx, 0, 0,
         barPos + 1.5f, hh - 1, 3, 4,
-        Color(220, 100).toNvgColor(), Color(128, 100).toNvgColor());
+        Color(0xcd, 0x5c, 0x5c, 0xff).toNvgColor(), Color(0x00, 0xff, 0xff, 0xff).toNvgColor());
 
       nvgBeginPath(ctx);
       nvgRoundedRect(ctx, 1, 1, barPos, hh - 2, 3);

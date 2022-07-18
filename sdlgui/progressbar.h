@@ -37,6 +37,7 @@ public:
 protected:
   float mValue;
 
+  /* AsyncTexture 这个结构体在哪里定义的??? */
     struct AsyncTexture;
     typedef std::shared_ptr<AsyncTexture> AsyncTexturePtr;
     AsyncTexturePtr _body;

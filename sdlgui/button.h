@@ -25,10 +25,10 @@ class  Button : public Widget
 public:
     /// Flags to specify the button behavior (can be combined with binary OR)
     enum Flags {
-        NormalButton = (1 << 0), // 1
-        RadioButton  = (1 << 1), // 2
-        ToggleButton = (1 << 2), // 4
-        PopupButton  = (1 << 3)  // 8
+        NormalButton = (1 << 0), // 1 普通按键
+        RadioButton  = (1 << 1), // 2 单选按键
+        ToggleButton = (1 << 2), // 4 自锁按键
+        PopupButton  = (1 << 3)  // 8 弹出按钮
     };
 
     /// The available icon positions.

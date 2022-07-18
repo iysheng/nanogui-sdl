@@ -53,7 +53,7 @@ struct Slider::AsyncTexture
 
       NVGpaint bg = nvgBoxGradient(
         ctx, 0, center.y - rh/2 + 1, ww, rh, 3, 3,
-        Color(0, enabled ? 32 : 10).toNvgColor(), Color(0, enabled ? 128 : 210).toNvgColor());
+        Color(0x00, 0xff, 0xff, enabled ? 32 : 10).toNvgColor(), Color(0, 0xff, 0xff, enabled ? 128 : 210).toNvgColor());
 
       nvgBeginPath(ctx);
       nvgRoundedRect(ctx, 0, center.y - rh/2 + 1, ww, rh, 2);
@@ -130,6 +130,7 @@ struct Slider::AsyncTexture
       nvgFillPaint(ctx, knob);
       nvgStroke(ctx);
       nvgFill(ctx);
+
       nvgBeginPath(ctx);
       nvgCircle(ctx, knobPos.x, knobPos.y, kr / 2);
       nvgFillColor(ctx, Color(150, enabled ? 255 : 100).toNvgColor());
@@ -179,12 +180,13 @@ struct Slider::AsyncTexture
 Slider::Slider(Widget *parent, float value)
     : Widget(parent), mValue(value), mRange(0.f, 1.f), mHighlightedRange(0.f, 0.f)
 {
-    mHighlightColor = Color(255, 80, 80, 70);
+    mHighlightColor = Color(00, 0xff, 0xff, 0xff);
 }
 
 Vector2i Slider::preferredSize(SDL_Renderer *) const
 {
-    return Vector2i(70, 20);
+  /* 定义了默认的 preferredSize 大小 */
+    return Vector2i(150, 20);
 }
 
 bool Slider::mouseDragEvent(const Vector2i &p, const Vector2i & /* rel */,
