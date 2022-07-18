@@ -81,7 +81,7 @@ elseif (APPLE)
   list(APPEND NNGUI_EXTRA_LIBS ${cocoa_library} ${opengl_library} ${corevideo_library} ${iokit_library})
   list(APPEND NNGUI_EXTRA_SOURCE darwin.mm)
 elseif(CMAKE_SYSTEM MATCHES "Linux")
-  list(APPEND NNGUI_EXTRA_LIBS GL Xxf86vm Xrandr Xinerama Xcursor Xi X11 pthread dl rt)
+  list(APPEND NNGUI_EXTRA_LIBS wayland-client wayland-server -drm -xkbcommon -ffi pthread dl rt)
 endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}

@@ -14,7 +14,7 @@
 #if defined(_WIN32)
 #include <SDL.h>
 #else
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #endif
 #include <array>
 #include <thread>

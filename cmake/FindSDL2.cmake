@@ -66,14 +66,7 @@
 #  License text for the above reference.)
 
 SET(SDL2_SEARCH_PATHS
-	~/Library/Frameworks
-	/Library/Frameworks
-	/usr/local
-	/usr
-	/sw # Fink
-	/opt/local # DarwinPorts
-	/opt/csw # Blastwave
-	/opt
+	/opt/red_aarch64/sdl2
 )
 
 FIND_PATH(SDL2_INCLUDE_DIR SDL.h
@@ -87,8 +80,10 @@ FIND_LIBRARY(SDL2_LIBRARY_TEMP
 	NAMES SDL2
 	HINTS
 	$ENV{SDL2DIR}
-	PATH_SUFFIXES lib/x64 lib/x86
+	PATH_SUFFIXES lib/ 
 	PATHS ${SDL2_SEARCH_PATHS}
+	NO_CACHE
+	NO_DEFAULT_PATH
 )
 
 IF(NOT SDL2_BUILDING_LIBRARY)
