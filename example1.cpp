@@ -81,7 +81,7 @@ public:
           auto& nwindow = window("按键demo", Vector2i{15, 15})
                             .withLayout<GroupLayout>();
 
-          nwindow.label("复位按键", "sans")._and()
+          nwindow.label("复位按键", "sans-bold")._and()
                  .button("Plain button", [] { cout << "pushed!" << endl; })
                     .withTooltip("这是一个普通的按键");
 
@@ -118,7 +118,10 @@ public:
                            .checkbox("复选框");
         }
 
-        /* 基础窗口测试 */
+        /* 基础窗口测试
+         * 加载 icons 目录下所有的 png 图片
+         * 将内容存储到 image 的  vector 类型中
+         * */
         ListImages images = loadImageDirectory(SDL_GetRenderer(pwindow), "icons");
 
         {
@@ -137,14 +140,17 @@ public:
                             msgdialog(MessageDialog::Type::Warning, "Title", "This is a question message",
                                       "Yes", "No", true, [](int result) { cout << "Dialog result: " << result << endl; }); });
 
+          /* 添加一个 label */
           pwindow.label("Image panel & scroll panel", "sans-bold");
+          /* 添加一个 popup 类型按键 */
           auto& imagePanelBtn = pwindow.popupbutton("Image Panel", ENTYPO_ICON_FOLDER);
 
           // Load all of the images by creating a GLTexture object and saving the pixel data.
+          /* 加载所有的图片？？？  */
           mCurrentImage = 0;
           for (auto& icon : images) mImagesData.emplace_back(icon.tex);
 
-          auto& img_window = window("Selected image", Vector2i(675, 15));
+          auto& img_window = window("选中的图片", Vector2i(675, 15));
           img_window.withLayout<GroupLayout>();
 
           auto imageView = img_window.add<ImageView>(mImagesData[0]);
@@ -324,26 +330,34 @@ public:
           });
         }
 
+        /* 小部件网格 */
         {
           auto& window = wdg<Window>("Grid of small widgets");
           window.withPosition({425, 288});
+          /* 创建一个新的布局 */
           auto* layout = new GridLayout(Orientation::Horizontal, 2,
                                          Alignment::Middle, 15, 5);
           layout->setColAlignment({ Alignment::Maximum, Alignment::Fill });
           layout->setSpacing(0, 10);
           window.setLayout(layout);
 
+          /* 调用 add 函数模板
+           * 将新创建的 label 控件关联到 window 作为其 parent
+           * */
           window.add<Label>("Floating point :", "sans-bold");
+          /* 创建 textBox */
           auto& textBox = window.wdg<TextBox>();
           textBox.setEditable(true);
+          /* 设置控件大小 */
           textBox.setFixedSize(Vector2i(100, 20));
           textBox.setValue("50");
           textBox.setUnits("GiB");
           textBox.setDefaultValue("0.0");
+          /* 设置字体大小 */
           textBox.setFontSize(16);
           textBox.setFormat("[-]?[0-9]*\\.?[0-9]+");
 
-          window.add<Label>("Positive integer :", "sans-bold");
+          window.add<Label>("整形输入框 :", "sans-bold");
           auto& textBox2 = window.wdg<TextBox>();
           textBox2.setEditable(true);
           textBox2.setFixedSize(Vector2i(100, 20));
@@ -352,6 +366,11 @@ public:
           textBox2.setDefaultValue("0.0");
           textBox2.setFontSize(16);
           textBox2.setFormat("[1-9][0-9]*");
+
+          auto* key_layout = new GridLayout(Orientation::Horizontal, 3,
+                                         Alignment::Middle, 15, 3);
+          textBox2.keyboard().setLayout(key_layout);
+                      //.withLayout<GroupLayout>();
 
           window.add<Label>( "Checkbox :", "sans-bold");
 
@@ -365,13 +384,19 @@ public:
                 .withFontSize(16)
                 .withFixedSize(Vector2i(100,20));
 
-          window.add<Label>("Color button :", "sans-bold");
+          window.add<Label>("颜色按键 :", "sans-bold");
+          /* 创建一个 popup button 按键 */
           auto& popupBtn = window.wdg<PopupButton>("", 0);
           popupBtn.setBackgroundColor(Color(255, 120, 0, 255));
           popupBtn.setFontSize(16);
           popupBtn.setFixedSize(Vector2i(100, 20));
+          /*
+           * 展开这个模板类 withLayout
+           *     setLayout(new GroupLayout()) 使用 GroupLayout 初始化 popup 窗口
+           * */
           auto& popup = popupBtn.popup().withLayout<GroupLayout>();
 
+          /* 创建一个 color wheel,关联 parent 为 popup */
           ColorWheel& colorwheel = popup.wdg<ColorWheel>();
           colorwheel.setColor(popupBtn.backgroundColor());
 
@@ -391,6 +416,7 @@ public:
               }
           });
         }
+        /* 确定每一个部件的大小 */
         performLayout(mSDL_Renderer);
     }
 
@@ -531,12 +557,14 @@ int main(int /* argc */, char ** /* argv */)
                 {
                     quit = true;
                 }
+                /* 处理事件 */
                 screen->onEvent( e );
             }
 
-            SDL_SetRenderDrawColor(renderer, 0xd3, 0xd3, 0xd3, 0xff );
+            SDL_SetRenderDrawColor(renderer, 0xd5, 0xe8, 0xd3, 0xff );
             SDL_RenderClear( renderer );
 
+            /* 绘制内容 */
             screen->drawAll();
 
             // Render the rect to the screen

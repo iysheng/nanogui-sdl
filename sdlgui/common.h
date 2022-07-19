@@ -65,6 +65,8 @@ struct ImageInfo
   int w, h;
   std::string path;
 };
+
+/* 定义了 ImageInfo vector */
 typedef std::vector<ImageInfo> ListImages;
 
 /// Load a directory of PNG images and upload them to the GPU (suitable for use with ImagePanel)

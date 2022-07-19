@@ -99,6 +99,9 @@ public:
     Color mWindowPopup;
     Color mWindowPopupTransparent;
 
+    Color mWindowKeyboard;
+    Color mWindowKeyboardTransparent;
+
     void getTexAndRect(SDL_Renderer *renderer, int x, int y, const char *text,
       const char* fontname, size_t ptsize, SDL_Texture **texture, SDL_Rect *rect, SDL_Color *textColor);
 

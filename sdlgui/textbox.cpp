@@ -149,6 +149,10 @@ TextBox::TextBox(Widget *parent,const std::string &value, const std::string& uni
 {
     if (mTheme) 
       mFontSize = mTheme->mTextBoxFontSize;
+    Window *parentWindow = window();
+    mKeyboard = new Keyboard(parentWindow->parent(), window());
+    mKeyboard->setSize(Vector2i(320, 250));
+    mKeyboard->setVisible(false);
     _captionTex.dirty = true;
     _unitsTex.dirty = true;
 }
@@ -221,6 +225,7 @@ void TextBox::drawBody(SDL_Renderer* renderer)
 
 void TextBox::draw(SDL_Renderer* renderer) 
 {
+    mKeyboard->setVisible(!mCommitted);
     Widget::draw(renderer);
 
     SDL_Point ap = getAbsolutePos();
@@ -832,5 +837,15 @@ TextBox::SpinArea TextBox::spinArea(const Vector2i & pos)
     return SpinArea::None;
 }
 
+void TextBox::performLayout(SDL_Renderer *ctx) 
+{
+    Widget::performLayout(ctx);
+
+    const Window *parentWindow = window();
+
+    /* 设置锚点位置 */
+    mKeyboard->setAnchorPos(Vector2i(parentWindow->width() + 15,
+                         absolutePosition().y - parentWindow->position().y + mSize.y /2));
+}
 NAMESPACE_END(sdlgui)
 

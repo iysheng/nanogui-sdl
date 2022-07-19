@@ -286,6 +286,7 @@ public:
     virtual PntRect getAbsoluteCliprect() const;
     virtual int getAbsoluteTop() const;
 
+    /* 返回 parent 函数,返回的是一个 Widget 对象指针 */
     Widget& _and() { return *parent(); }
     Widget& withId(const std::string& id) { setId(id); return *this; }
     
@@ -294,6 +295,7 @@ public:
     Widget& withFixedSize(const Vector2i& size) { setFixedSize(size); return *this; }
     Widget& withTooltip(const std::string& text) { setTooltip(text); return *this; }
 
+    /* withLayout 模板 */
     template<typename LayoutClass,typename... Args>
     Widget& withLayout(const Args&... args) { setLayout(new LayoutClass(args...)); return *this; }
 
@@ -326,7 +328,7 @@ protected:
     ref<Theme> mTheme;
     ref<Layout> mLayout;
     std::string mId;
-    Vector2i _pos;
+    Vector2i _pos; /* 这个 _pos 表示的是自己的位置？？？ */
     Vector2i mSize, mFixedSize;
     std::vector<Widget *> mChildren;
     bool mVisible, mEnabled;

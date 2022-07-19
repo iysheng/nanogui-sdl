@@ -49,6 +49,7 @@ ListImages loadImageDirectory(SDL_Renderer* renderer, const std::string &path)
         iminfo.path = fullName;
         SDL_QueryTexture(tex, nullptr, nullptr, &iminfo.w, &iminfo.h);
         
+        /* 尾部插入这个元素 */
         result.push_back(iminfo);
 #if !defined(_WIN32)
     }

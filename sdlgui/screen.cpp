@@ -35,8 +35,10 @@ Screen::Screen( SDL_Window* window, const Vector2i &size, const std::string &cap
     initialize( window );
 }
 
+/* 事件回调函数 */
 bool Screen::onEvent(SDL_Event& event)
 {
+    /* 获取对应的 value 值，即 Screen * 指针 */
     auto it = __sdlgui_screens.find(_window);
     if (it == __sdlgui_screens.end())
        return false;
@@ -59,6 +61,7 @@ bool Screen::onEvent(SDL_Event& event)
     }
     break;
 
+    /* 鼠标或者触摸屏的回调函数 */
     case SDL_MOUSEBUTTONDOWN:
     case SDL_MOUSEBUTTONUP:
     {
@@ -77,6 +80,7 @@ bool Screen::onEvent(SDL_Event& event)
         return false;
 
       SDL_Keymod mods = SDL_GetModState();
+      /* 键盘按键的回调函数 */
       return keyCallbackEvent(event.key.keysym.sym, event.key.keysym.scancode, event.key.state, mods);
     }
     break;
@@ -146,10 +150,11 @@ void Screen::setSize(const Vector2i &size)
     SDL_SetWindowSize(_window, size.x, size.y);
 }
 
+/* 窗口绘制 */
 void Screen::drawAll()
 {
-  drawContents();
-  drawWidgets();
+  drawContents(); /* 徐函数动态链编 */
+  drawWidgets(); 
 }
 
 /* 绘制窗口 */
@@ -160,14 +165,18 @@ void Screen::drawWidgets()
 
     /* Calculate pixel ratio for hi-dpi devices. */
     mPixelRatio = (float) mFBSize[0] / (float) mSize[0];
+    /* 测试结果是 1.0 */
+    // printf("mPixelRatio:%f\n", mPixelRatio);
     
     SDL_Renderer* renderer = SDL_GetRenderer(_window);
+    /* 遍历执行 child 的 draw 函数,这个是重点 */
     draw(renderer);
 
     double elapsed = SDL_GetTicks() - mLastInteraction;
     if (elapsed > 0.5f) 
     {
         /* Draw tooltips */
+        /* 显示 tips 信息 */
         const Widget *widget = findWidget(mMousePos);
         if (widget && !widget->tooltip().empty()) 
         {
@@ -265,9 +274,13 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
     mLastInteraction = SDL_GetTicks();
     try {
         if (mFocusPath.size() > 1) {
+            /* 强制转换为 Window 类的指针
+             * 这里为什么要减去 2 ？？？
+             * */
             const Window *window =
                 dynamic_cast<Window *>(mFocusPath[mFocusPath.size() - 2]);
             if (window && window->modal()) {
+                /* 确认这个 window 是否包含这个触发点，如果不包含直接返回 */
                 if (!window->contains(mMousePos))
                     return false;
             }
@@ -278,6 +291,7 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
         else
             mMouseState &= ~(1 << button);
 
+        /* 查找触发的 widget */
         auto dropWidget = findWidget(mMousePos);
         if (mDragActive && action == SDL_MOUSEBUTTONUP &&
             dropWidget != mDragWidget)
@@ -291,17 +305,27 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
         }*/
 
         if (action == SDL_MOUSEBUTTONDOWN && button == SDL_BUTTON_LEFT) {
+            printf("catch mouse left button\n");
             mDragWidget = findWidget(mMousePos);
+            /* 如果没有找到有效的 widget,即修正为 nullptr */
             if (mDragWidget == this)
+            {
                 mDragWidget = nullptr;
+            }
+
             mDragActive = mDragWidget != nullptr;
             if (!mDragActive)
+            {
+                /* 更新窗口状态 */
                 updateFocus(nullptr);
+                printf("update window status\n");
+            }
         } else {
             mDragActive = false;
             mDragWidget = nullptr;
         }
 
+        /* 调用 mouseButtonEvent 函数 */
         return mouseButtonEvent(mMousePos, button, action == SDL_MOUSEBUTTONDOWN,
                                 mModifiers);
     } catch (const std::exception &e) {
@@ -398,6 +422,7 @@ void Screen::updateFocus(Widget *widget) {
     mFocusPath.clear();
     Widget *window = nullptr;
     while (widget) {
+        /* 更新 focus 向量 */
         mFocusPath.push_back(widget);
         if (dynamic_cast<Window *>(widget))
             window = widget;
@@ -407,6 +432,7 @@ void Screen::updateFocus(Widget *widget) {
         (*it)->focusEvent(true);
 
     if (window)
+        /* 更新当前窗口向前 */
         moveWindowToFront((Window *) window);
 }
 

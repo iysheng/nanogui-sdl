@@ -115,6 +115,8 @@ public:
 
 protected:
     SDL_Window *_window;
+    /* mFocusPath 是 Widgets 指针的 **向量类型**
+     * */
     std::vector<Widget *> mFocusPath;
     SDL_Renderer* mSDL_Renderer;
     Vector2i mFBSize;

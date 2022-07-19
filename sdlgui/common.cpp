@@ -44,6 +44,9 @@ NVGcolor Color::toNvgColor() const {
   return reinterpret_cast<const NVGcolor &>(this->_d);
 }
 
+/* key 是 SDL_Window 指针, value 是 Screen 指针
+ * key value 键值对
+ * */
 extern std::map<SDL_Window *, Screen *> __sdlgui_screens;
 
 PntRect srect2pntrect(const SDL_Rect& srect)

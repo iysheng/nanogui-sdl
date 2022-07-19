@@ -2403,6 +2403,9 @@ static void rtnvg__renderDelete(void *uptr) {
   free(rt);
 }
 
+/*
+ * 使用的 NanoVG 开源库来绘制矢量图形
+ * */
 inline NVGcontext *nvgCreateRT(int flags, int w, int h, int clrColor) {
   NVGparams params;
   NVGcontext *ctx = NULL;

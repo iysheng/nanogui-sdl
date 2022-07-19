@@ -18,6 +18,8 @@
 #include <SDL.h>
 #endif
 
+#include "nanovg.h"
+
 NAMESPACE_BEGIN(sdlgui)
 
 ColorWheel::ColorWheel(Widget *parent, const Color& rgb)
@@ -33,7 +35,8 @@ Vector2i ColorWheel::preferredSize(SDL_Renderer *) const
 
 void ColorWheel::draw(SDL_Renderer *renderer) 
 {
-/*    Widget::draw(ctx);
+#if 0
+    Widget::draw(renderer);
 
     if (!mVisible)
         return;
@@ -43,7 +46,7 @@ void ColorWheel::draw(SDL_Renderer *renderer)
           w = mSize.x(),
           h = mSize.y();
 
-    SDL_Renderer* vg = ctx;
+    NVGcontext* vg = ctx;
 
     int i;
     float r0, r1, ax,ay, bx,by, cx,cy, aeps, r;
@@ -141,7 +144,7 @@ void ColorWheel::draw(SDL_Renderer *renderer)
     nvgRestore(vg);
 
     nvgRestore(vg);
-    */
+#endif
 }
 
 bool ColorWheel::mouseButtonEvent(const Vector2i &p, int button, bool down,

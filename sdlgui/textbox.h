@@ -15,6 +15,7 @@
 
 #include <functional>
 #include <sdlgui/widget.h>
+#include <sdlgui/keyboard.h>
 #include <memory>
 #include <sstream>
 
@@ -83,6 +84,10 @@ public:
     Vector2i preferredSize(SDL_Renderer *ctx) const override;
     void draw(SDL_Renderer* renderer) override;
     void drawBody(SDL_Renderer* renderer);
+    Keyboard& keyboard(const Vector2i& size) { mKeyboard->setFixedSize(size); return *mKeyboard; }
+    Keyboard& keyboard() { return *mKeyboard; }
+    Keyboard* keyboardptr() { return mKeyboard; }
+    void performLayout(SDL_Renderer *ctx) override;
 protected:
     bool checkFormat(const std::string& input,const std::string& format);
     bool copySelection();
@@ -98,6 +103,7 @@ protected:
     SpinArea spinArea(const Vector2i & pos);
 
 protected:
+    Keyboard *mKeyboard = nullptr;
     bool mEditable;
     bool mSpinnable;
     bool mCommitted;

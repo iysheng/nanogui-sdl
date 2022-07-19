@@ -15,7 +15,7 @@ NAMESPACE_BEGIN(sdlgui)
 
   /* Label 构造函数 */
 Label::Label(Widget *parent, const std::string &caption, const std::string &font, int fontSize)
-    : Widget(parent), mCaption(caption), mFont(font)
+    : Widget(parent), mCaption(caption), mFont(font) /* 关联到 parent widget */
 {
     if (mTheme) 
     {
@@ -53,6 +53,7 @@ Vector2i Label::preferredSize(SDL_Renderer *ctx) const
     else 
     {
       int w, h;
+      /* 根据字体内容自动计算长度大小 */
       const_cast<Label*>(this)->mTheme->getUtf8Bounds(mFont.c_str(), fontSize(), mCaption.c_str(), &w, &h);
       return Vector2i(w, mTheme->mStandardFontSize);
     }
@@ -66,6 +67,7 @@ void Label::setFontSize(int fontSize)
 
 void Label::draw(SDL_Renderer *renderer)
 {
+  /* 递归遍历执行 child 的 draw 函数 */
   Widget::draw(renderer);
 
   if (_texture.dirty)

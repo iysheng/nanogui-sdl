@@ -24,6 +24,7 @@ NAMESPACE_BEGIN(sdlgui)
 class  Window : public Widget 
 {
     friend class Popup;
+    friend class Keyboard;
 public:
     Window(Widget *parent, const std::string &title = "Untitled");
     Window(Widget *parent, const std::string &title, const Vector2i& pos)
@@ -87,7 +88,7 @@ protected:
 
     Texture _titleTex;
 
-    bool mModal;
+    bool mModal; /* 这个 mModal 是什么意思？？？ */
     bool mDrag;
     bool mDraggable = true;
     bool mDropShadowEnabled = true;

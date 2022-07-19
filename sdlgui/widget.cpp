@@ -67,19 +67,27 @@ Vector2i Widget::preferredSize(SDL_Renderer *ctx) const
 
 void Widget::performLayout(SDL_Renderer *ctx) 
 {
+  /* 如果定义了 mLayout 布局，那么直接使用这个布局初始化这个对象 */
     if (mLayout) 
     {
         mLayout->performLayout(ctx, this);
     } 
     else 
     {
+      /* 遍历 mChildren 向量 */
         for (auto c : mChildren) 
         {
+          /* 获取 preferredSize 和 fixedsize */
           Vector2i pref = c->preferredSize(ctx), fix = c->fixedSize();
+          /* 如果有 fixedsize 那么使用 fixedsize
+           * 否则使用 preferredSize
+           * 这个步骤是确定大小
+           * */
             c->setSize(Vector2i(
                 fix[0] ? fix[0] : pref[0],
                 fix[1] ? fix[1] : pref[1]
             ));
+            /* 执行 children 的 performLayout 函数 */
             c->performLayout(ctx);
         }
     }
@@ -120,6 +128,7 @@ bool Widget::mouseButtonEvent(const Vector2i &p, int button, bool down, int modi
     {
         Widget *child = *it;
         if (child->visible() && child->contains(p - _pos) &&
+            /* 回调 child 的 mouseButtonEvent 函数 */
             child->mouseButtonEvent(p - _pos, button, down, modifiers))
             return true;
     }
@@ -287,9 +296,11 @@ int Widget::getAbsoluteTop() const
     : _pos.y;
 }
 
+/* 更新 focus 到当前窗口 */
 void Widget::requestFocus() 
 {
     Widget *widget = this;
+    /* 遍历更新当前 widget 的 parent 窗口 */
     while (widget->parent())
         widget = widget->parent();
     ((Screen *) widget)->updateFocus(this);
