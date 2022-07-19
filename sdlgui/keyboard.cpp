@@ -33,13 +33,16 @@ struct Keyboard::AsyncTexture
   {
     Keyboard* pp = ptr;
     AsyncTexture* self = this;
+    /* 创建了一个线程去做这些事情 */
     std::thread tgr([=]() {
       std::lock_guard<std::mutex> guard(pp->theme()->loadMutex);
 
       NVGcontext *ctx = nullptr;
       int realw, realh;
+      /* 传递的参数都是引用 */
       pp->rendereBodyTexture(ctx, realw, realh, dx);
       self->tex.rrect = { 0, 0, realw, realh };
+      /* 关联这个矢量图到 keyboard */
       self->ctx = ctx;
     });
 
@@ -98,6 +101,7 @@ void Keyboard::rendereBodyTexture(NVGcontext*& ctx, int& realw, int& realh, int 
   int cr = mTheme->mWindowCornerRadius;
 
   /* Draw a drop shadow */
+  /* gradient : 梯度、斜坡 */
   NVGpaint shadowPaint = nvgBoxGradient(ctx, offset.x, offset.y, ww, hh, cr * 2, ds * 2,
     mTheme->mDropShadow.toNvgColor(),
     mTheme->mTransparent.toNvgColor());
@@ -210,7 +214,11 @@ void Keyboard::drawBody(SDL_Renderer* renderer)
   }
   else
   {
+    printf("This is first time, just create keyboard\n");
     AsyncTexturePtr newtx = std::make_shared<AsyncTexture>(id);
+    /* 添加新创建的 AsyncTexturePtr 到向量尾部
+     * 执行这个 load 函数,这个函数会执行一次
+     * */
     newtx->load(this, _anchorDx);
     _txs.push_back(newtx);
   }

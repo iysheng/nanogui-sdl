@@ -32,6 +32,7 @@ Theme::Theme(SDL_Renderer *ctx) {
     mTextBoxFontSize                  = 20;
     mWindowCornerRadius               = 2;
     mWindowHeaderHeight               = 30;
+    /* 窗口阴影面积像素宽度 */
     mWindowDropShadowSize             = 10;
     mButtonCornerRadius               = 2;
     mTabBorderWidth                   = 0.75f;

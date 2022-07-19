@@ -528,7 +528,7 @@ struct RTNVGcontext {
   unsigned int stencilFuncMask;
 #endif
 
-  unsigned char *pixels; // RGBA
+  unsigned char *pixels; // RGBA  存储的像素信息
   int width;
   int height;
 };
