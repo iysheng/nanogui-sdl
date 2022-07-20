@@ -71,7 +71,7 @@ struct Keyboard::AsyncTexture
 
 };
 
-eyboard::Keyboard(Widget *parent, Window *parentWindow)
+Keyboard::Keyboard(Widget *parent, Window *parentWindow)
     : Window(parent, ""), mParentWindow(parentWindow),
       mAnchorPos(Vector2i::Zero()), mAnchorHeight(30)
 {
