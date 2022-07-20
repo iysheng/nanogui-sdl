@@ -39,7 +39,7 @@ struct Keyboard::AsyncTexture
 
       NVGcontext *ctx = nullptr;
       int realw, realh;
-      /* 传递的参数都是引用 */
+      /* 传递的参数都是引用,这个函数比较重要 */
       pp->rendereBodyTexture(ctx, realw, realh, dx);
       self->tex.rrect = { 0, 0, realw, realh };
       /* 关联这个矢量图到 keyboard */
@@ -71,7 +71,7 @@ struct Keyboard::AsyncTexture
 
 };
 
-Keyboard::Keyboard(Widget *parent, Window *parentWindow)
+eyboard::Keyboard(Widget *parent, Window *parentWindow)
     : Window(parent, ""), mParentWindow(parentWindow),
       mAnchorPos(Vector2i::Zero()), mAnchorHeight(30)
 {
@@ -87,12 +87,13 @@ void Keyboard::rendereBodyTexture(NVGcontext*& ctx, int& realw, int& realh, int 
   int ds = mTheme->mWindowDropShadowSize;
   int dy = 0;
 
+  printf("ww=%d hh=%d\n", ww, hh);
   Vector2i offset(dx + ds, dy + ds);
 
   realw = ww + 2 * ds + dx; //with + 2*shadow + offset
   realh = hh + 2 * ds + dy;
 
-  /* 创建一个 ctx */
+  /* 创建一个 ctx 用来绘图的画布, nanovg */
   ctx = nvgCreateRT(NVG_DEBUG, realw, realh, 0);
 
   float pxRatio = 1.0f;
@@ -106,8 +107,10 @@ void Keyboard::rendereBodyTexture(NVGcontext*& ctx, int& realw, int& realh, int 
     mTheme->mDropShadow.toNvgColor(),
     mTheme->mTransparent.toNvgColor());
 
+  /* 绘制窗口的阴影部分？？ */
   nvgBeginPath(ctx);
   //nvgRect(ctx, offset.x - ds, offset.y - ds, ww + 2 * ds, hh + 2 * ds);
+  // 定义了圆角矩形区
   nvgRoundedRect(ctx, offset.x - ds, offset.y - ds, ww + 2 * ds, hh + 2 * ds, cr);
   //nvgPathWinding(ctx, NVG_HOLE);
   nvgFillPaint(ctx, shadowPaint);
@@ -213,6 +216,7 @@ void Keyboard::drawBody(SDL_Renderer* renderer)
       drawBodyTemp(renderer);
   }
   else
+	  /* 第一次会走到这里 */
   {
     printf("This is first time, just create keyboard\n");
     AsyncTexturePtr newtx = std::make_shared<AsyncTexture>(id);
