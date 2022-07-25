@@ -171,4 +171,8 @@ if (NANOGUI_BUILD_EXAMPLE)
   else()
     file(COPY resources/icons DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
   endif()
+  add_custom_command(
+    TARGET example1 POST_BUILD
+    COMMAND cp -frv example1 /var/lib/nfs -frv
+    VERBATIM)
 endif()
