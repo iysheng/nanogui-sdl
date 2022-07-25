@@ -72,7 +72,6 @@ struct Button::AsyncTexture
   }
 };
 
-
 Button::Button(Widget *parent, const std::string &caption, int icon)
     : Widget(parent), mCaption(caption), mIcon(icon),
       mIconPosition(IconPosition::LeftCentered), mPushed(false),

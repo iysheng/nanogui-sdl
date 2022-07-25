@@ -451,6 +451,7 @@ void Screen::centerWindow(Window *window)
      window->setSize(window->preferredSize(mSDL_Renderer));
      window->performLayout(mSDL_Renderer);
   }
+  /* 设置居中位置 */
   window->setPosition((mSize - window->size()) / 2);
 }
 
@@ -478,6 +479,7 @@ void Screen::moveWindowToFront(Window *window) {
 
 void Screen::performLayout(SDL_Renderer* ctx)
 {
+    /* 确定布局函数 */
   Widget::performLayout(ctx);
 }
 

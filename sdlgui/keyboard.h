@@ -14,9 +14,16 @@
 
 #include <sdlgui/window.h>
 #include <sdlgui/screen.h>
+#include <sdlgui/button.h>
 #include <vector>
 
 NAMESPACE_BEGIN(sdlgui)
+
+enum class KeyboardType {
+    Number = 0,
+    NumberIP = 1,
+    Full = 2,
+};
 
 /**
  * \class Keyboard keyboard.h sdl_gui/keyboard.h
@@ -30,7 +37,7 @@ class  Keyboard : public Window
 {
 public:
     /// Create a new keyboard parented to a screen (first argument) and a parent window
-    Keyboard(Widget *parent, Window *parentWindow);
+    Keyboard(Widget *parent, Window *parentWindow, KeyboardType type = KeyboardType::Number);
 
     /// Return the anchor position in the parent window; the placement of the keyboard is relative to it
     void setAnchorPos(const Vector2i &anchorPos) { mAnchorPos = anchorPos; }

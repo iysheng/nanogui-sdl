@@ -10,6 +10,7 @@
 */
 
 #include <sdlgui/keyboard.h>
+#include <sdlgui/entypo.h>
 #include <sdlgui/theme.h>
 #include <thread>
 
@@ -71,10 +72,31 @@ struct Keyboard::AsyncTexture
 
 };
 
-Keyboard::Keyboard(Widget *parent, Window *parentWindow)
+Keyboard::Keyboard(Widget *parent, Window *parentWindow, KeyboardType type)
     : Window(parent, ""), mParentWindow(parentWindow),
       mAnchorPos(Vector2i::Zero()), mAnchorHeight(30)
 {
+  if (type == KeyboardType::Number)
+  {
+    setLayout(new GridLayout(Orientation::Horizontal, 3, Alignment::Middle, 5, 5));
+    this->wdg<Button>("1").setCallback([]() {
+                printf("num 1 pushed\n");
+        });
+    Button *button2 = new Button(this, "2");
+    button2->setCallback([]{printf("num 2 catched\n");});
+    Button *button3 = new Button(this, "3");
+    Button *button4 = new Button(this, "4");
+    Button *button5 = new Button(this, "5");
+    Button *button6 = new Button(this, "6");
+    Button *button7 = new Button(this, "7");
+    Button *button8 = new Button(this, "8");
+    Button *button9 = new Button(this, "9");
+    Button *button_del = new Button(this, "", ENTYPO_ICON_LEFT_THIN);
+    Button *button0 = new Button(this, "0");
+    Button *button_ok = new Button(this, "↵");
+    button_ok->setFixedSize(button0->size());
+    button_del->setFixedSize(button0->size());
+  }
 }
 
 /*
@@ -123,6 +145,7 @@ void Keyboard::rendereBodyTexture(NVGcontext*& ctx, int& realw, int& realh, int 
   Vector2i base = Vector2i(offset.x + 0, offset.y + anchorHeight());
   int sign = -1;
 
+  /* 这三个函数是在做什么 */
   nvgMoveTo(ctx, base.x + 15 * sign, base.y);
   nvgLineTo(ctx, base.x, base.y - 15);
   nvgLineTo(ctx, base.x, base.y + 15);
@@ -250,6 +273,18 @@ void Keyboard::draw(SDL_Renderer* renderer)
 bool Keyboard::mouseButtonEvent(const Vector2i &p, int button, bool down, int modifiers)
 {
     printf("catch keyboard (%d,%d)\n", (p - _pos).x, (p - _pos).y);
+    for (auto it = mChildren.rbegin(); it != mChildren.rend(); ++it) 
+    {
+        Widget *child = *it;
+        if (child->visible() && child->contains(p - _pos) &&
+            /* 回调 child 的 mouseButtonEvent 函数 */
+            child->mouseButtonEvent(p - _pos, button, down, modifiers))
+        {
+            printf("get here now\n");
+        }
+    }
+
+    printf("get here right\n");
     return false;
 }
 

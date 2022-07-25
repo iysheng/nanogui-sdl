@@ -226,6 +226,7 @@
 #define ENTYPO_ICON_DOWN_THIN            0x2193
 #define ENTYPO_ICON_UP_THIN              0x2191
 #define ENTYPO_ICON_RIGHT_THIN           0x2192
+#define ENTYPO_ICON_ENTER_THIN           0x21b5
 #define ENTYPO_ICON_ARROW_COMBO          0xE74F
 #define ENTYPO_ICON_THREE_DOTS           0x23F6
 #define ENTYPO_ICON_TWO_DOTS             0x23F5

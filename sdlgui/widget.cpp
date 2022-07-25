@@ -68,7 +68,7 @@ Vector2i Widget::preferredSize(SDL_Renderer *ctx) const
 void Widget::performLayout(SDL_Renderer *ctx) 
 {
   /* 如果定义了 mLayout 布局，那么直接使用这个布局初始化这个对象 */
-    if (mLayout) 
+    if (mLayout)
     {
         mLayout->performLayout(ctx, this);
     } 

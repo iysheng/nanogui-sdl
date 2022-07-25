@@ -272,6 +272,7 @@ void GridLayout::computeLayout(SDL_Renderer *ctx, const Widget *widget, std::vec
 void GridLayout::performLayout(SDL_Renderer *ctx, Widget *widget) const 
 {
   Vector2i fs_w = widget->fixedSize();
+  /* 如果设置了 fixed size,那么使用 fixedSize */
   Vector2i containerSize(
         fs_w[0] ? fs_w[0] : widget->width(),
         fs_w[1] ? fs_w[1] : widget->height()
@@ -312,11 +313,13 @@ void GridLayout::performLayout(SDL_Renderer *ctx, Widget *widget) const
     }
 
     int axis1 = (int) mOrientation, axis2 = (axis1 + 1) % 2;
+    /* 确定一个起始向量 */
     Vector2i start = Vector2i::Constant(mMargin) + extra;
 
     size_t numChildren = widget->children().size();
     size_t child = 0;
 
+    /* 定义一个位置向量 */
     Vector2i pos = start;
     for (int i2 = 0; i2 < dim[axis2]; i2++) 
     {
@@ -324,6 +327,7 @@ void GridLayout::performLayout(SDL_Renderer *ctx, Widget *widget) const
         for (int i1 = 0; i1 < dim[axis1]; i1++) 
         {
             Widget *w = nullptr;
+            /* 遍历这个 window 的 child window */
             do 
             {
                 if (child >= numChildren)
@@ -331,7 +335,9 @@ void GridLayout::performLayout(SDL_Renderer *ctx, Widget *widget) const
                 w = widget->children()[child++];
             } while (!w->visible());
 
+            /* 执行 preferredSize() 函数,确定一个 preferredSize */
             Vector2i ps = w->preferredSize(ctx);
+            /* 获取 fixed size */
             Vector2i fs = w->fixedSize();
             Vector2i targetSize(
                 fs[0] ? fs[0] : ps[0],
@@ -360,8 +366,11 @@ void GridLayout::performLayout(SDL_Renderer *ctx, Widget *widget) const
                         break;
                 }
             }
+            /* 确定了窗口的位置 */
             w->setPosition(itemPos);
+            /* 确定了窗口的大小 */
             w->setSize(targetSize);
+            /* 确定了窗口的布局 */
             w->performLayout(ctx);
             pos[axis1] += grid[axis1][i1] + mSpacing[axis1];
         }

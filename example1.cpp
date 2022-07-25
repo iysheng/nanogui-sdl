@@ -65,286 +65,23 @@ public:
     TestWindow( SDL_Window* pwindow, int rwidth, int rheight )
       : Screen( pwindow, Vector2i(rwidth, rheight), "SDL_gui Test")
       {
-        {
-          /* 按键测试的 demo  窗口,使用了模板函数和模板类 */
-          /*
-           * Window& window("Button demo", Vector2i{15, 15})
-           * return wdg<Window>("Button demo", Vector2i{15, 15})
-           *
-           * Window& wdg("Button demo", Vector2i{15, 15})
-           * {
-           *     Window *widget = new Window(this, "Button demo", Vector2i{15, 15})
-           *     return *widget;
-           * }
-           */
-          /* auto& 表示这个变量可能被推导为引用变量 */
-          auto& nwindow = window("按键demo", Vector2i{15, 15})
-                            .withLayout<GroupLayout>();
-
-          nwindow.label("复位按键", "sans-bold")._and()
-                 .button("Plain button", [] { cout << "pushed!" << endl; })
-                    .withTooltip("这是一个普通的按键");
-
-          nwindow.button("格式按键", ENTYPO_ICON_ROCKET, [] { cout << "pushed!" << endl; })
-                   .withBackgroundColor( Color(0, 0, 255, 25) );
-
-          nwindow.label("Toggle buttons", "sans-bold")._and()
-                 .button("Toggle me", [](bool state) { cout << "Toggle button state: " << state << endl; })
-                    .withFlags(Button::ToggleButton);
-
-          nwindow.label("单选按键", "sans-bold")._and()
-                 .button("单选按键1")
-                    .withFlags(Button::RadioButton);
-
-          nwindow.button("单选按键2")
-                    .withFlags(Button::RadioButton)._and()
-                 .label("工具集面板", "sans-bold");
-
-          auto& tools = nwindow.widget().boxlayout(Orientation::Horizontal, Alignment::Middle, 0, 6);
-
-          tools.toolbutton(ENTYPO_ICON_CLOUD)._and()
-               .toolbutton(ENTYPO_ICON_FF)._and()
-               .toolbutton(ENTYPO_ICON_COMPASS)._and()
-               .toolbutton(ENTYPO_ICON_INSTALL);
-
-          nwindow.label("弹出按键", "sans-bold")._and()
-                 .popupbutton("弹出", ENTYPO_ICON_EXPORT)
-                    .popup()
-                      .withLayout<GroupLayout>()
-                         .label("Arbitrary widgets can be placed here")._and()
-                         .checkbox("A check box")._and()
-                      .popupbutton("递归弹出", ENTYPO_ICON_FLASH).popup()
-                         .withLayout<GroupLayout>()
-                           .checkbox("复选框");
-        }
-
-        /* 基础窗口测试
-         * 加载 icons 目录下所有的 png 图片
-         * 将内容存储到 image 的  vector 类型中
-         * */
-        ListImages images = loadImageDirectory(SDL_GetRenderer(pwindow), "icons");
-
-        {
-          auto& pwindow = window("基础装饰", Vector2i{ 200, 15 }).withLayout<GroupLayout>();
-
-          pwindow.label("Message dialog", "sans-bold")._and()
-                 .widget()
-                    .boxlayout(Orientation::Horizontal,Alignment::Middle, 0, 6)
-                      .button("信息", [&] {
-                            msgdialog(MessageDialog::Type::Information, "Title", "This is an information message",
-                                      [](int result) { cout << "Dialog result: " << result << endl; }); })._and()
-                      .button("警告", [&] {
-                            msgdialog(MessageDialog::Type::Warning, "Title", "This is a warning message",
-                                      [](int result) { cout << "Dialog result: " << result << endl; }); })._and()
-                      .button("询问", [&] {
-                            msgdialog(MessageDialog::Type::Warning, "Title", "This is a question message",
-                                      "Yes", "No", true, [](int result) { cout << "Dialog result: " << result << endl; }); });
-
-          /* 添加一个 label */
-          pwindow.label("Image panel & scroll panel", "sans-bold");
-          /* 添加一个 popup 类型按键 */
-          auto& imagePanelBtn = pwindow.popupbutton("Image Panel", ENTYPO_ICON_FOLDER);
-
-          // Load all of the images by creating a GLTexture object and saving the pixel data.
-          /* 加载所有的图片？？？  */
-          mCurrentImage = 0;
-          for (auto& icon : images) mImagesData.emplace_back(icon.tex);
-
-          auto& img_window = window("选中的图片", Vector2i(675, 15));
-          img_window.withLayout<GroupLayout>();
-
-          auto imageView = img_window.add<ImageView>(mImagesData[0]);
-
-          imagePanelBtn.popup(Vector2i(245, 150))
-                         .vscrollpanel()
-                           .imgpanel(images)
-                             .setCallback([this, imageView](int i)
-                             {
-                               if (i >= mImagesData.size())
-                                 return;
-                               imageView->bindImage(mImagesData[i]);
-                               mCurrentImage = i;
-                               cout << "Selected item " << i << '\n';
-                             });
-
-
-          // Change the active textures.
-
-          imageView->setGridThreshold(20);
-          imageView->setPixelInfoThreshold(20);
-          imageView->setPixelInfoCallback(
-              [this, imageView](const Vector2i& index) -> std::pair<std::string, Color>
-              {
-                void *pixels;
-                int pitch, w, h;
-                SDL_QueryTexture(mImagesData[mCurrentImage], nullptr, nullptr, &w, &h);
-
-                SDL_LockTexture(mImagesData[mCurrentImage], nullptr, &pixels, &pitch);
-                Uint32 *imageData = (Uint32*)pixels;
-
-                std::string stringData;
-                uint16_t channelSum = 0;
-                for (int i = 0; i != 4; ++i)
-                {
-                    uint8_t *data = (uint8_t*)imageData;
-                    auto& channelData = data[4*index.y*w + 4*index.x + i];
-                    channelSum += channelData;
-                    stringData += (std::to_string(static_cast<int>(channelData)) + "\n");
-                }
-                float intensity = static_cast<float>(255 - (channelSum / 4)) / 255.0f;
-                float colorScale = intensity > 0.5f ? (intensity + 1) / 2 : intensity / 2;
-                Color textColor = Color(colorScale, 1.0f);
-                SDL_UnlockTexture(mImagesData[mCurrentImage]);
-                return { stringData, textColor };
-              }
-          );
-
-          pwindow.label("File dialog", "sans-bold")._and()
-                 .widget()
-                       .boxlayout(Orientation::Horizontal, Alignment::Middle, 0, 6 )
-                         .button("Open", [&] {
-                                cout << "File dialog result: " << file_dialog(
-                                { {"png", "Portable Network Graphics"}, {"txt", "Text file"} }, false) << endl;
-                              })._and()
-                         .button("Save", [&] {
-                                cout << "File dialog result: " << file_dialog(
-                                { {"png", "Portable Network Graphics"}, {"txt", "Text file"} }, true) << endl;
-                              });
-
-          pwindow.label("Combo box", "sans-bold")._and()
-                         /* 下拉框 */
-                 .dropdownbox(std::vector<std::string>{ "Dropdown item 1", "Dropdown item 2", "Dropdown item 3" })._and()
-                         /* 组合框 */
-                 .combobox(std::vector<std::string>{ "Combo box item 1", "Combo box item 2", "Combo box item 3"})._and()
-
-                 .label("Check box", "sans-bold")._and()
-                 .checkbox("Flag 1", [](bool state) { cout << "Check box 1 state: " << state << endl; })
-                     .withChecked(true)._and()
-                 .checkbox("Flag 2", [](bool state) { cout << "Check box 2 state: " << state << endl; })._and()
-                 .label("Progress bar", "sans-bold")._and()
-                 .progressbar().withId("progressbar")._and()
-                 .label("Slider and text box", "sans-bold")._and()
-                 .widget().withLayout<BoxLayout>(Orientation::Horizontal, Alignment::Middle, 0, 20)
-                 /* 滑杆,滑动条
-                  * [] 表示什么意思???
-                  * */
-                    .slider(0.5f, [](Slider* obj, float value) {
-                      if (auto* textBox = obj->gfind<TextBox>("slider-textbox"))
-                        textBox->setValue(std::to_string((int)(value * 100)));
-                    }, [](float value) { cout << "Final slider value: " << (int)(value * 100) << endl; })
-                        ._and()
-                 .textbox("50", "%").withAlignment(TextBox::Alignment::Right)
-                    .withId("slider-textbox")
-                    .withFixedSize(Vector2i(60, 25))
-                    .withFontSize(20);
-
-          pwindow.label("A switch boxes", "sans-bold");
-          Widget *swbx = new Widget(&pwindow);
-          swbx->setLayout(new BoxLayout(Orientation::Horizontal, Alignment::Middle, 0, 2));
-
-          auto* swbh = new SwitchBox(swbx, SwitchBox::Alignment::Horizontal, "");
-          swbh->setFixedSize(Vector2i(84, 32));
-          new SwitchBox(swbx, SwitchBox::Alignment::Vertical, "");
-        }
-
-        {
-          auto& window = wdg<Window>("Misc. widgets");
-          window.setPosition(425,15);
-          window.setFixedSize({ 400, 300 });
-          window.setLayout(new GroupLayout());
-          TabWidget* tabWidget = window.add<TabWidget>();
-
-          Widget* layer = tabWidget->createTab("Color Wheel");
-          layer->setLayout(new GroupLayout());
-
-          // Use overloaded variadic add to fill the tab widget with Different tabs.
-          layer->add<Label>("Color wheel widget", "sans-bold");
-          layer->add<ColorWheel>();
-
-          layer = tabWidget->createTab("Function Graph");
-          layer->setLayout(new GroupLayout());
-
-          layer->add<Label>("Function graph widget", "sans-bold");
-
-          Graph *graph = layer->add<Graph>("Some Function");
-
-          graph->setHeader("E = 2.35e-3");
-          graph->setFooter("Iteration 89");
-          std::vector<float> &func = graph->values();
-          func.resize(100);
-          for (int i = 0; i < 100; ++i)
-              func[i] = 0.5f * (0.5f * std::sin(i / 10.f) +
-                                0.5f * std::cos(i / 23.f) + 1);
-
-          // Dummy tab used to represent the last tab button.
-          tabWidget->createTab("+");
-
-          // A simple counter.
-          int counter = 1;
-          tabWidget->setCallback([tabWidget, this, counter] (int index) mutable {
-              if (index == (tabWidget->tabCount()-1)) {
-                  // When the "+" tab has been clicked, simply add a new tab.
-                  std::string tabName = "Dynamic " + std::to_string(counter);
-                  Widget* layerDyn = tabWidget->createTab(index, tabName);
-                  layerDyn->setLayout(new GroupLayout());
-                  layerDyn->add<Label>("Function graph widget", "sans-bold");
-                  Graph *graphDyn = layerDyn->add<Graph>("Dynamic function");
-
-                  graphDyn->setHeader("E = 2.35e-3");
-                  graphDyn->setFooter("Iteration " + std::to_string(index*counter));
-                  std::vector<float> &funcDyn = graphDyn->values();
-                  funcDyn.resize(100);
-                  for (int i = 0; i < 100; ++i)
-                      funcDyn[i] = 0.5f *
-                          std::abs((0.5f * std::sin(i / 10.f + counter) +
-                                    0.5f * std::cos(i / 23.f + 1 + counter)));
-                  ++counter;
-                  // We must invoke perform layout from the screen instance to keep everything in order.
-                  // This is essential when creating tabs dynamically.
-                  performLayout();
-                  // Ensure that the newly added header is visible on screen
-                  tabWidget->ensureTabVisible(index);
-
-              }
-          });
-          tabWidget->setActiveTab(0);
-
-          // A button to go back to the first tab and scroll the window.
-          auto& panel = window.wdg<Widget>();
-          panel.add<Label>("Jump to tab: ");
-          panel.setLayout(new BoxLayout(Orientation::Horizontal,
-                                         Alignment::Middle, 0, 6));
-
-          auto ib = panel.add<IntBox<int>>();
-          ib->setEditable(true);
-
-          auto b = panel.add<Button>("", ENTYPO_ICON_FORWARD);
-          b->setFixedSize(Vector2i(22, 22));
-          ib->setFixedHeight(22);
-          b->setCallback([tabWidget, ib] {
-              int value = ib->value();
-              if (value >= 0 && value < tabWidget->tabCount()) {
-                  tabWidget->setActiveTab(value);
-                  tabWidget->ensureTabVisible(value);
-              }
-          });
-        }
-
         /* 小部件网格 */
         {
           auto& window = wdg<Window>("Grid of small widgets");
-          window.withPosition({425, 288});
+          /* 确定了 window 的位置 */
+          window.withPosition({100, 100});
           /* 创建一个新的布局 */
           auto* layout = new GridLayout(Orientation::Horizontal, 2,
                                          Alignment::Middle, 15, 5);
           layout->setColAlignment({ Alignment::Maximum, Alignment::Fill });
           layout->setSpacing(0, 10);
+          /* 定义了这个窗口的布局 */
           window.setLayout(layout);
 
           /* 调用 add 函数模板
            * 将新创建的 label 控件关联到 window 作为其 parent
            * */
-          window.add<Label>("Floating point :", "sans-bold");
+          window.add<Label>("浮点数测试 :", "sans-bold");
           /* 创建 textBox */
           auto& textBox = window.wdg<TextBox>();
           textBox.setEditable(true);
@@ -367,9 +104,10 @@ public:
           textBox2.setFontSize(16);
           textBox2.setFormat("[1-9][0-9]*");
 
-          auto* key_layout = new GridLayout(Orientation::Horizontal, 3,
+          auto* key_layout = new GridLayout(Orientation::Horizontal, 2,
                                          Alignment::Middle, 15, 3);
-          textBox2.keyboard().setLayout(key_layout);
+          //textBox2.keyboard().setLayout(key_layout);
+          //textBox2.keyboard().setFixedSize(Vector2i(50, 50));
                       //.withLayout<GroupLayout>();
 
           window.add<Label>( "Checkbox :", "sans-bold");
@@ -504,8 +242,8 @@ int main(int /* argc */, char ** /* argv */)
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    int winWidth = 1280;
-    int winHeight = 800;
+    int winWidth = 800;
+    int winHeight = 600;
     printf("w=%d h=%d\n", winWidth, winHeight);
 
     // Create an application window with the following settings:
@@ -515,7 +253,7 @@ int main(int /* argc */, char ** /* argv */)
       SDL_WINDOWPOS_UNDEFINED,  //    int y: initial y position
       winWidth,                      //    int w: width, in pixels
       winHeight,                      //    int h: height, in pixels
-      SDL_WINDOW_FULLSCREEN | SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN  | SDL_WINDOW_ALLOW_HIGHDPI        //    Uint32 flags: window options, see docs
+      SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN  | SDL_WINDOW_ALLOW_HIGHDPI        //    Uint32 flags: window options, see docs
     );
 
     // Check that the window was successfully made
