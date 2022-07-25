@@ -75,7 +75,7 @@ struct Button::AsyncTexture
 Button::Button(Widget *parent, const std::string &caption, int icon)
     : Widget(parent), mCaption(caption), mIcon(icon),
       mIconPosition(IconPosition::LeftCentered), mPushed(false),
-      mFlags(NormalButton), mBackgroundColor(Color(0, 0)),
+      mFlags(NormalButton) /* 初始就是 normal button */, mBackgroundColor(Color(0, 0)),
       mTextColor(Color(0, 0)) 
 {
   _captionTex.dirty = true;
@@ -113,11 +113,13 @@ bool Button::mouseButtonEvent(const Vector2i &p, int button, bool down, int modi
        button causes the parent window to be destructed */
     ref<Button> self = this;
 
+	/* 这个 mEnabled 什么时候赋值的呢 */
     if (button ==  SDL_BUTTON_LEFT && mEnabled) 
     {
         bool pushedBackup = mPushed;
         if (down) 
         {
+            /* 如果是选择按钮 */
             if (mFlags & RadioButton) 
             {
                 if (mButtonGroup.empty()) 
@@ -147,6 +149,7 @@ bool Button::mouseButtonEvent(const Vector2i &p, int button, bool down, int modi
                 }
             }
 
+            /* 如果是弹出按钮 */
             if (mFlags & PopupButton) 
             {
                 for (auto widget : parent()->children()) 
@@ -161,15 +164,20 @@ bool Button::mouseButtonEvent(const Vector2i &p, int button, bool down, int modi
                 }
             }
 
+            /* 开关按钮 */
             if (mFlags & ToggleButton)
                 mPushed = !mPushed;
             else
+				/* 标记 mPushed 为真 */
                 mPushed = true;
-        } 
+        }
         else if (mPushed) 
         {
             if (contains(p) && mCallback)
+			{
                 mCallback();
+				printf("get here?");
+			}
             if (mFlags & NormalButton)
                 mPushed = false;
         }

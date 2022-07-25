@@ -134,7 +134,12 @@ bool Widget::mouseButtonEvent(const Vector2i &p, int button, bool down, int modi
     }
     
     if (button == SDL_BUTTON_LEFT && down && !mFocused)
+	{
+		/* 更新 parent 窗口 focus 到当前 widget */
         requestFocus();
+    	printf("child request focus\n");
+	}
+	printf("child done\n");
     return false;
 }
 
