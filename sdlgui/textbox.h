@@ -37,7 +37,7 @@ public:
         Right
     };
 
-    TextBox(Widget *parent, const std::string &value = "Untitled", const std::string& units = "");
+    TextBox(Widget *parent, const std::string &value = "Untitled", const std::string& units = "", const KeyboardType type = KeyboardType::Number);
 
     bool editable() const { return mEditable; }
     void setEditable(bool editable);

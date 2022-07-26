@@ -78,7 +78,7 @@ struct Keyboard::AsyncTexture
 };
 
 Keyboard::Keyboard(Widget *parent, Window *parentWindow, KeyboardType type)
-    : Window(parent, ""), mParentWindow(parentWindow),
+    : Window(parent, ""), mParentWindow(parentWindow), mKeyboardType(type),
       mAnchorPos(Vector2i::Zero()), mAnchorHeight(30) /* 默认锚点位置，在 Y 轴向下 30 像素的位置 */
 {
   if (type == KeyboardType::Number)
@@ -157,6 +157,90 @@ Keyboard::Keyboard(Widget *parent, Window *parentWindow, KeyboardType type)
      * 这个大小应该也要变化
      * */
     button_ok->setFixedSize(Vector2i(29, 30));
+    button_del->setFixedSize(Vector2i(29, 30));
+    printf("keyboard parent=%p parentWindow=%p\n", mParent, mParentWindow);
+  }
+  else if (type == KeyboardType::NumberIP)
+  {
+    setLayout(new GridLayout(Orientation::Horizontal, 3, Alignment::Middle, 5, 5));
+    this->wdg<Button>("1").setWidgetCallback([](Widget *widget) {
+        Keyboard *keyboard = dynamic_cast<Keyboard*>(widget);
+        keyboard->mKeyboardValue.push_back('1');
+        keyboard->getTextBox()->setValue(keyboard->mKeyboardValue);
+        keyboard->getTextBox()->focusEvent(true);
+        //((TextBox *)(((Keyboard *)widget)->getTextBox()))->focusEvent(true);
+        });
+    this->wdg<Button>("2").setWidgetCallback([](Widget *widget) {
+        ((Keyboard *)widget)->mKeyboardValue.push_back('2');
+        ((TextBox *)(((Keyboard *)widget)->getTextBox()))->setValue(((Keyboard *)widget)->mKeyboardValue);
+        ((TextBox *)(((Keyboard *)widget)->getTextBox()))->focusEvent(true);
+        });
+    this->wdg<Button>("3").setWidgetCallback([](Widget *widget) {
+        ((Keyboard *)widget)->mKeyboardValue.push_back('3');
+        ((TextBox *)(((Keyboard *)widget)->getTextBox()))->setValue(((Keyboard *)widget)->mKeyboardValue);
+        ((TextBox *)(((Keyboard *)widget)->getTextBox()))->focusEvent(true);
+        });
+    this->wdg<Button>("4").setWidgetCallback([](Widget *widget) {
+        ((Keyboard *)widget)->mKeyboardValue.push_back('4');
+        ((TextBox *)(((Keyboard *)widget)->getTextBox()))->setValue(((Keyboard *)widget)->mKeyboardValue);
+        ((TextBox *)(((Keyboard *)widget)->getTextBox()))->focusEvent(true);
+        });
+    this->wdg<Button>("5").setWidgetCallback([](Widget *widget) {
+        ((Keyboard *)widget)->mKeyboardValue.push_back('5');
+        ((TextBox *)(((Keyboard *)widget)->getTextBox()))->setValue(((Keyboard *)widget)->mKeyboardValue);
+        ((TextBox *)(((Keyboard *)widget)->getTextBox()))->focusEvent(true);
+        });
+    this->wdg<Button>("6").setWidgetCallback([](Widget *widget) {
+        ((Keyboard *)widget)->mKeyboardValue.push_back('6');
+        ((TextBox *)(((Keyboard *)widget)->getTextBox()))->setValue(((Keyboard *)widget)->mKeyboardValue);
+        ((TextBox *)(((Keyboard *)widget)->getTextBox()))->focusEvent(true);
+        });
+    this->wdg<Button>("7").setWidgetCallback([](Widget *widget) {
+        ((Keyboard *)widget)->mKeyboardValue.push_back('7');
+        ((TextBox *)(((Keyboard *)widget)->getTextBox()))->setValue(((Keyboard *)widget)->mKeyboardValue);
+        ((TextBox *)(((Keyboard *)widget)->getTextBox()))->focusEvent(true);
+        });
+    this->wdg<Button>("8").setWidgetCallback([](Widget *widget) {
+        ((Keyboard *)widget)->mKeyboardValue.push_back('8');
+        ((TextBox *)(((Keyboard *)widget)->getTextBox()))->setValue(((Keyboard *)widget)->mKeyboardValue);
+        ((TextBox *)(((Keyboard *)widget)->getTextBox()))->focusEvent(true);
+        });
+    this->wdg<Button>("9").setWidgetCallback([](Widget *widget) {
+        ((Keyboard *)widget)->mKeyboardValue.push_back('9');
+        ((TextBox *)(((Keyboard *)widget)->getTextBox()))->setValue(((Keyboard *)widget)->mKeyboardValue);
+        ((TextBox *)(((Keyboard *)widget)->getTextBox()))->focusEvent(true);
+        });
+    Button *button_del = new Button(this, "", ENTYPO_ICON_LEFT_THIN);
+    button_del->setWidgetCallback([](Widget *widget){
+      Keyboard *keyboard = dynamic_cast<Keyboard*>(widget);
+      if (keyboard->mKeyboardValue.length())
+      {
+        keyboard->mKeyboardValue.pop_back();
+        keyboard->getTextBox()->setValue(keyboard->mKeyboardValue);
+        keyboard->getTextBox()->focusEvent(true);
+      }
+    });
+    this->wdg<Button>("0").setWidgetCallback([](Widget *widget) {
+        ((Keyboard *)widget)->mKeyboardValue.push_back('0');
+        ((TextBox *)(((Keyboard *)widget)->getTextBox()))->setValue(((Keyboard *)widget)->mKeyboardValue);
+        ((TextBox *)(((Keyboard *)widget)->getTextBox()))->focusEvent(true);
+        });
+    this->wdg<Button>(".").setWidgetCallback([](Widget *widget) {
+        ((Keyboard *)widget)->mKeyboardValue.push_back('.');
+        ((TextBox *)(((Keyboard *)widget)->getTextBox()))->setValue(((Keyboard *)widget)->mKeyboardValue);
+        ((TextBox *)(((Keyboard *)widget)->getTextBox()))->focusEvent(true);
+        });
+    Button *button_ok = new Button(this, "↵");
+    button_ok->setWidgetCallback([](Widget *widget) {
+                printf("num ok pushed:%s\n", ((Keyboard *)widget)->mKeyboardValue.c_str());
+                ((Keyboard *)widget)->setVisible(false);
+                ((Keyboard *)widget)->parent()->requestFocus();
+                ((TextBox *)(((Keyboard *)widget)->getTextBox()))->setValue(((Keyboard *)widget)->mKeyboardValue);
+        });
+    /* 测试发现大小是 29，30 这里直接固定大小,但是随着字体大小的改变
+     * 这个大小应该也要变化
+     * */
+    //button_ok->setFixedSize(Vector2i(29 * 3, 30));
     button_del->setFixedSize(Vector2i(29, 30));
     printf("keyboard parent=%p parentWindow=%p\n", mParent, mParentWindow);
   }

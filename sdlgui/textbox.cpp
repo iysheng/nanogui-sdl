@@ -125,7 +125,7 @@ struct TextBox::AsyncTexture
   }
 };
 
-TextBox::TextBox(Widget *parent,const std::string &value, const std::string& units)
+TextBox::TextBox(Widget *parent,const std::string &value, const std::string& units, KeyboardType type)
     : Widget(parent),
       mEditable(false),
       mSpinnable(false),
@@ -150,10 +150,9 @@ TextBox::TextBox(Widget *parent,const std::string &value, const std::string& uni
     if (mTheme) 
       mFontSize = mTheme->mTextBoxFontSize;
 
-      printf("textbox this=%p\n", this);
     Window *parentWindow = window();
     /* parent 和 parent window 为什么是这两个呢？？？ */
-    mKeyboard = new Keyboard(parentWindow->parent(), window());
+    mKeyboard = new Keyboard(parentWindow->parent(), window(), type);
     mKeyboard->setSize(Vector2i(320, 250));
     mKeyboard->setVisible(false);
     mKeyboard->setTextBox(this);

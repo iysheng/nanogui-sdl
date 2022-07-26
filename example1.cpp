@@ -96,16 +96,17 @@ public:
           /* 设置字体大小 */
           textBox.setFontSize(16);
           textBox.setFormat("[-]?[0-9]*\\.?[0-9]+");
+          textBox.setAlignment(TextBox::Alignment::Left);
 
-          window.add<Label>("整形输入框 :", "sans-bold");
-          auto& textBox2 = window.wdg<TextBox>();
+
+          window.add<Label>("设备IP :", "sans-bold");
+          auto& textBox2 = window.wdg<TextBox>("", "", KeyboardType::NumberIP);
           textBox2.setEditable(true);
-          textBox2.setFixedSize(Vector2i(100, 20));
-          textBox2.setValue("50");
-          textBox2.setUnits("Mhz");
-          textBox2.setDefaultValue("0.0");
+          textBox2.setFixedSize(Vector2i(150, 20));
+          textBox2.setValue("192.168.255.1");
           textBox2.setFontSize(16);
-          textBox2.setFormat("[1-9][0-9]*");
+          //textBox2.setFormat("[1-9][0-9]*");
+          textBox2.setAlignment(TextBox::Alignment::Left);
 
           auto* key_layout = new GridLayout(Orientation::Horizontal, 2,
                                          Alignment::Middle, 15, 3);
@@ -245,8 +246,8 @@ int main(int /* argc */, char ** /* argv */)
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    int winWidth = 800;
-    int winHeight = 600;
+    int winWidth = 1080;
+    int winHeight = 800;
     printf("w=%d h=%d\n", winWidth, winHeight);
 
     // Create an application window with the following settings:
@@ -256,7 +257,7 @@ int main(int /* argc */, char ** /* argv */)
       SDL_WINDOWPOS_UNDEFINED,  //    int y: initial y position
       winWidth,                      //    int w: width, in pixels
       winHeight,                      //    int h: height, in pixels
-      SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN  | SDL_WINDOW_ALLOW_HIGHDPI        //    Uint32 flags: window options, see docs
+      SDL_WINDOW_FULLSCREEN | SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN  | SDL_WINDOW_ALLOW_HIGHDPI        //    Uint32 flags: window options, see docs
     );
 
     // Check that the window was successfully made

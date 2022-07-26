@@ -83,6 +83,7 @@ protected:
     typedef std::shared_ptr<AsyncTexture> AsyncTexturePtr;
     std::vector<AsyncTexturePtr> _txs;
     TextBox *mTextBox;
+    KeyboardType mKeyboardType;
 };
 
 NAMESPACE_END(sdlgui)
