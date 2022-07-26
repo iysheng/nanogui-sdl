@@ -291,8 +291,10 @@ void Button::draw(SDL_Renderer* renderer)
   Widget::draw(renderer);
 
   Vector2i ap = absolutePosition();
+  /* 绘制窗体本身 */
   drawBody(renderer);
 
+  /* 绘制显示的内容 */
   int fontSize = mFontSize == -1 ? mTheme->mButtonFontSize : mFontSize;
   if (_captionTex.dirty)
   {

@@ -1969,12 +1969,14 @@ void nvgBeginPath(NVGcontext* ctx)
 	nvg__clearPathCache(ctx);
 }
 
+/* 定义线条开始坐标 */
 void nvgMoveTo(NVGcontext* ctx, float x, float y)
 {
 	float vals[] = { NVG_MOVETO, x, y };
 	nvg__appendCommands(ctx, vals, NVG_COUNTOF(vals));
 }
 
+/* 定义线条结束坐标 */
 void nvgLineTo(NVGcontext* ctx, float x, float y)
 {
 	float vals[] = { NVG_LINETO, x, y };

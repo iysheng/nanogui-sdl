@@ -299,7 +299,7 @@ int main(int /* argc */, char ** /* argv */)
                 screen->onEvent( e );
             }
 
-            SDL_SetRenderDrawColor(renderer, 0xd5, 0xe8, 0xd3, 0xff );
+            SDL_SetRenderDrawColor(renderer, 0xd5, 0xe8, 0xd3, 0xff);
             SDL_RenderClear( renderer );
 
             /* 绘制内容 */

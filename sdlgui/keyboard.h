@@ -70,6 +70,7 @@ protected:
     virtual Vector2i getOverrideBodyPos();
 
     Window *mParentWindow;
+    /* 这三个参数和锚点相关，也就是弹出窗口关联的那个部件 */
     Vector2i mAnchorPos;
     int mAnchorHeight;
     int _anchorDx = 15;

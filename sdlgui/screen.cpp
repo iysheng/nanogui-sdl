@@ -69,6 +69,7 @@ bool Screen::onEvent(SDL_Event& event)
         return false;
 
       SDL_Keymod mods = SDL_GetModState();
+      /* 按键的回调函数 */
       return mouseButtonCallbackEvent(event.button.button, event.button.type, mods);
     }
     break;
@@ -295,6 +296,7 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
         auto dropWidget = findWidget(mMousePos);
         if (mDragActive && action == SDL_MOUSEBUTTONUP &&
             dropWidget != mDragWidget)
+            /* mouseButtonEvent 处理函数 */
             mDragWidget->mouseButtonEvent(
                 mMousePos - mDragWidget->parent()->absolutePosition(), button,
                 false, mModifiers);

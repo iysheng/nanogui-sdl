@@ -28,8 +28,10 @@ struct Keyboard::AsyncTexture
   Texture tex;
   NVGcontext* ctx = nullptr;
 
+  /* 构造函数，指定 id */
   AsyncTexture(int _id) : id(_id) {};
 
+  /* 加载键盘的主体，也就是这个窗口本身，不包括这个窗口上的 button */
   void load(Keyboard* ptr, int dx)
   {
     Keyboard* pp = ptr;
@@ -40,7 +42,9 @@ struct Keyboard::AsyncTexture
 
       NVGcontext *ctx = nullptr;
       int realw, realh;
-      /* 传递的参数都是引用,这个函数比较重要 */
+      /* 传递的参数都是引用,这个函数比较重要
+       * 绘制 keyboard 的主体内容，没有渲染 mChildren 控件
+       * */
       pp->rendereBodyTexture(ctx, realw, realh, dx);
       self->tex.rrect = { 0, 0, realw, realh };
       /* 关联这个矢量图到 keyboard */
@@ -74,7 +78,7 @@ struct Keyboard::AsyncTexture
 
 Keyboard::Keyboard(Widget *parent, Window *parentWindow, KeyboardType type)
     : Window(parent, ""), mParentWindow(parentWindow),
-      mAnchorPos(Vector2i::Zero()), mAnchorHeight(30)
+      mAnchorPos(Vector2i::Zero()), mAnchorHeight(30) /* 默认锚点位置，在 Y 轴向下 30 像素的位置 */
 {
   if (type == KeyboardType::Number)
   {
@@ -94,13 +98,16 @@ Keyboard::Keyboard(Widget *parent, Window *parentWindow, KeyboardType type)
     Button *button_del = new Button(this, "", ENTYPO_ICON_LEFT_THIN);
     Button *button0 = new Button(this, "0");
     Button *button_ok = new Button(this, "↵");
-    button_ok->setFixedSize(button0->size());
-    button_del->setFixedSize(button0->size());
+    /* 测试发现大小是 29，30 这里直接固定大小,但是随着字体大小的改变
+     * 这个大小应该也要变化
+     * */
+    button_ok->setFixedSize(Vector2i(29, 30));
+    button_del->setFixedSize(Vector2i(29, 30));
   }
 }
 
 /*
- * ctx 传递的是引用
+ * ctx 传递的是引用, 绘制键盘的主体内容
  * */
 void Keyboard::rendereBodyTexture(NVGcontext*& ctx, int& realw, int& realh, int dx)
 {
@@ -109,7 +116,6 @@ void Keyboard::rendereBodyTexture(NVGcontext*& ctx, int& realw, int& realh, int 
   int ds = mTheme->mWindowDropShadowSize;
   int dy = 0;
 
-  printf("ww=%d hh=%d\n", ww, hh);
   Vector2i offset(dx + ds, dy + ds);
 
   realw = ww + 2 * ds + dx; //with + 2*shadow + offset
@@ -145,9 +151,11 @@ void Keyboard::rendereBodyTexture(NVGcontext*& ctx, int& realw, int& realh, int 
   Vector2i base = Vector2i(offset.x + 0, offset.y + anchorHeight());
   int sign = -1;
 
-  /* 这三个函数是在做什么 */
+  /* 定义线条开始坐标 */
   nvgMoveTo(ctx, base.x + 15 * sign, base.y);
+  /* 定义线条结束坐标 */
   nvgLineTo(ctx, base.x, base.y - 15);
+  /* 定义线条结束坐标 */
   nvgLineTo(ctx, base.x, base.y + 15);
 
   nvgFillColor(ctx, mTheme->mWindowKeyboard.toNvgColor());
@@ -169,6 +177,7 @@ void Keyboard::performLayout(SDL_Renderer *ctx)
     }
 }
 
+/* 获取控件的相对位置 */
 void Keyboard::refreshRelativePlacement() 
 {
     mParentWindow->refreshRelativePlacement();
@@ -224,7 +233,8 @@ void Keyboard::drawBody(SDL_Renderer* renderer)
   int id = 1;
 
   /* 找到匹配的对象返回 [begin, end)
-   * 固定的匹配 id == 1 ???
+   * 固定的匹配 id == 1 ???, 这里为什么查找 id 是 1 呢？？？
+   * 是因为创建这个对象的时候，直接指定了 id 是 1 ？？ 但是为什么不从 0
    * */
   auto atx = std::find_if(_txs.begin(), _txs.end(), [id](AsyncTexturePtr p) { return p->id == id; });
 
@@ -242,13 +252,16 @@ void Keyboard::drawBody(SDL_Renderer* renderer)
 	  /* 第一次会走到这里 */
   {
     printf("This is first time, just create keyboard\n");
+    /* 创建一个指定 id 的 vector 对象 */
     AsyncTexturePtr newtx = std::make_shared<AsyncTexture>(id);
     /* 添加新创建的 AsyncTexturePtr 到向量尾部
      * 执行这个 load 函数,这个函数会执行一次
      * */
     newtx->load(this, _anchorDx);
+    /* 压入控件到 vector */
     _txs.push_back(newtx);
   }
+
 }
 
 Vector2i Keyboard::getOverrideBodyPos()
@@ -265,8 +278,10 @@ void Keyboard::draw(SDL_Renderer* renderer)
   if (!mVisible)
     return;
 
+  /* 绘制 keyboard 的主体 */
   drawBody(renderer);
   
+  /* 绘制 mChildren 控件 */
   Widget::draw(renderer);
 }
 

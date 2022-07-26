@@ -28,6 +28,7 @@ Widget::Widget(Widget *parent)
       mFocused(false), mMouseFocus(false), mTooltip(""), mFontSize(-1.0f),
       mCursor(Cursor::Arrow) 
 {
+  /* 如果 parent 存在直接添加到 parent 的 child 向量 */
     if (parent)
         parent->addChild(this);
 }
@@ -201,6 +202,7 @@ bool Widget::keyboardCharacterEvent(unsigned int)
     return false;
 }
 
+/* 添加 Child 节点 */
 void Widget::addChild(int index, Widget * widget) 
 {
     assert(index <= childCount());
@@ -311,6 +313,7 @@ void Widget::requestFocus()
     ((Screen *) widget)->updateFocus(this);
 }
 
+/* 绘制 mChildren 控件 */
 void Widget::draw(SDL_Renderer* renderer)
 {
   for (auto child : mChildren)
