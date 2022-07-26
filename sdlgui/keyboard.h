@@ -15,6 +15,7 @@
 #include <sdlgui/window.h>
 #include <sdlgui/screen.h>
 #include <sdlgui/button.h>
+#include <sdlgui/textbox.h>
 #include <vector>
 
 NAMESPACE_BEGIN(sdlgui)
@@ -62,6 +63,9 @@ public:
     void draw(SDL_Renderer* renderer) override;
     virtual void drawBody(SDL_Renderer* renderer) override;
     virtual void drawBodyTemp(SDL_Renderer* renderer);
+    std::string mKeyboardValue;
+    TextBox *getTextBox(void){return mTextBox;};
+    void setTextBox(TextBox *textBox) {mTextBox = textBox;};
 
 protected:
     /// Internal helper function to maintain nested window position values
@@ -78,6 +82,7 @@ protected:
     struct AsyncTexture;
     typedef std::shared_ptr<AsyncTexture> AsyncTexturePtr;
     std::vector<AsyncTexturePtr> _txs;
+    TextBox *mTextBox;
 };
 
 NAMESPACE_END(sdlgui)

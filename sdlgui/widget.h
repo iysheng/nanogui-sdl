@@ -178,7 +178,9 @@ public:
         return new WidgetClass(this, args...);
     }
 
-    /* 定义了一个模板函数 wdg */
+    /* 定义了一个模板函数 wdg
+     * 和 add 模板有什么区别呢？？？
+     * */
     template<typename WidgetClass, typename... Args>
     WidgetClass& wdg(const Args&... args)
     {

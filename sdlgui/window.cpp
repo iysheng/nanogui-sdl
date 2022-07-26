@@ -149,6 +149,7 @@ struct Window::AsyncTexture
 Window::Window(Widget *parent, const std::string &title)
     : Widget(parent), mTitle(title), mButtonPanel(nullptr), mModal(false), mDrag(false) 
 {
+  printf("Window parent=%p\n", parent);
   _titleTex.dirty = true;
 }
 

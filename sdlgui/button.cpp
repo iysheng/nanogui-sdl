@@ -108,12 +108,14 @@ Vector2i Button::preferredSize(SDL_Renderer *ctx) const
 
 bool Button::mouseButtonEvent(const Vector2i &p, int button, bool down, int modifiers)
 {
-    Widget::mouseButtonEvent(p, button, down, modifiers);
+  /* 为什么要执行 widget 的 mouseButtonEvent 呢？？？ */
+    //Widget::mouseButtonEvent(p, button, down, modifiers);
     /* Temporarily increase the reference count of the button in case the
        button causes the parent window to be destructed */
     ref<Button> self = this;
 
 	/* 这个 mEnabled 什么时候赋值的呢 */
+    printf("mEnabled=%d\n", mEnabled);
     if (button ==  SDL_BUTTON_LEFT && mEnabled) 
     {
         bool pushedBackup = mPushed;
@@ -168,9 +170,13 @@ bool Button::mouseButtonEvent(const Vector2i &p, int button, bool down, int modi
             if (mFlags & ToggleButton)
                 mPushed = !mPushed;
             else
-				/* 标记 mPushed 为真 */
+            {
+				/* 一般按键,标记 mPushed 为真 */
                 mPushed = true;
+                printf("mPushed:%d\n", mPushed);
+            }
         }
+        /* 按键弹起后会走到这里 */
         else if (mPushed) 
         {
             if (contains(p) && mCallback)
@@ -178,8 +184,17 @@ bool Button::mouseButtonEvent(const Vector2i &p, int button, bool down, int modi
                 mCallback();
 				printf("get here?");
 			}
+            /* 一般地这个函数，会用在 keyboard 面板上 */
+            if (contains(p) && mWidgetCallback)
+			{
+                mWidgetCallback(parent());
+				printf("get here for widget callback?");
+			}
             if (mFlags & NormalButton)
+            {
+                /* normal 格式的按键恢复 mPushed 为 false */
                 mPushed = false;
+            }
         }
         if (pushedBackup != mPushed && mChangeCallback)
             mChangeCallback(mPushed);
@@ -191,6 +206,8 @@ bool Button::mouseButtonEvent(const Vector2i &p, int button, bool down, int modi
         }
         return true;
     }
+
+    printf("oh no\n");
     return false;
 }
 

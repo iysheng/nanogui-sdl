@@ -30,12 +30,13 @@ std::map<SDL_Window *, Screen *> __sdlgui_screens;
 Screen::Screen( SDL_Window* window, const Vector2i &size, const std::string &caption,
                bool resizable, bool fullscreen)
     : Widget(nullptr), _window(nullptr), mSDL_Renderer(nullptr), mCaption(caption)
+      /* 初始化一个 Widget 对象？？？ */
 {
     SDL_SetWindowTitle( window, caption.c_str() );
     initialize( window );
 }
 
-/* 事件回调函数 */
+/* Screen 控件事件回调函数入口 */
 bool Screen::onEvent(SDL_Event& event)
 {
     /* 获取对应的 value 值，即 Screen * 指针 */
@@ -270,6 +271,7 @@ bool Screen::cursorPosCallbackEvent(double x, double y)
     return false;
 }
 
+/* 按键的回调函数 */
 bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
     mModifiers = modifiers;
     mLastInteraction = SDL_GetTicks();
@@ -281,12 +283,15 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
             const Window *window =
                 dynamic_cast<Window *>(mFocusPath[mFocusPath.size() - 2]);
             if (window && window->modal()) {
-                /* 确认这个 window 是否包含这个触发点，如果不包含直接返回 */
+                /* 确认这个 window 是否包含这个触发点，如果不包含直接返回
+                 * 如果包含 contains 函数返回 1
+                 * */
                 if (!window->contains(mMousePos))
                     return false;
             }
         }
 
+        /* 按下还是探开 */
         if (action == SDL_MOUSEBUTTONDOWN)
             mMouseState |= 1 << button;
         else
@@ -424,7 +429,7 @@ void Screen::updateFocus(Widget *widget) {
     mFocusPath.clear();
     Widget *window = nullptr;
     while (widget) {
-        /* 更新 focus 向量 */
+        /* 更新 focus 向量,插入新元素 */
         mFocusPath.push_back(widget);
         if (dynamic_cast<Window *>(widget))
             window = widget;
@@ -458,6 +463,7 @@ void Screen::centerWindow(Window *window)
 }
 
 void Screen::moveWindowToFront(Window *window) {
+    /* 删除所有的 mChildren 节点 */
     mChildren.erase(std::remove(mChildren.begin(), mChildren.end(), window), mChildren.end());
     mChildren.push_back(window);
     /* Brute force topological sort (no problem for a few windows..) */

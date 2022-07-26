@@ -149,10 +149,14 @@ TextBox::TextBox(Widget *parent,const std::string &value, const std::string& uni
 {
     if (mTheme) 
       mFontSize = mTheme->mTextBoxFontSize;
+
+      printf("textbox this=%p\n", this);
     Window *parentWindow = window();
+    /* parent 和 parent window 为什么是这两个呢？？？ */
     mKeyboard = new Keyboard(parentWindow->parent(), window());
     mKeyboard->setSize(Vector2i(320, 250));
     mKeyboard->setVisible(false);
+    mKeyboard->setTextBox(this);
     _captionTex.dirty = true;
     _unitsTex.dirty = true;
 }
@@ -507,8 +511,10 @@ bool TextBox::focusEvent(bool focused)
 
     if (mEditable) 
     {
+          printf("test focus:%s\n", mValue.c_str());
         if (focused) 
         {
+          printf("test focus:%s\n", mValue.c_str());
             mValueTemp = mValue;
             _tempTex.dirty = true;
             mCommitted = false;

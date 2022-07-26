@@ -9,6 +9,7 @@
     BSD-style license that can be found in the LICENSE.txt file.
 */
 
+#include <sdlgui/textbox.h>
 #include <sdlgui/keyboard.h>
 #include <sdlgui/entypo.h>
 #include <sdlgui/theme.h>
@@ -83,26 +84,54 @@ Keyboard::Keyboard(Widget *parent, Window *parentWindow, KeyboardType type)
   if (type == KeyboardType::Number)
   {
     setLayout(new GridLayout(Orientation::Horizontal, 3, Alignment::Middle, 5, 5));
-    this->wdg<Button>("1").setCallback([]() {
-                printf("num 1 pushed\n");
+    this->wdg<Button>("1").setWidgetCallback([](Widget *widget) {
+        ((Keyboard *)widget)->mKeyboardValue.push_back('1');
         });
-    Button *button2 = new Button(this, "2");
-    button2->setCallback([]{printf("num 2 catched\n");});
-    Button *button3 = new Button(this, "3");
-    Button *button4 = new Button(this, "4");
-    Button *button5 = new Button(this, "5");
-    Button *button6 = new Button(this, "6");
-    Button *button7 = new Button(this, "7");
-    Button *button8 = new Button(this, "8");
-    Button *button9 = new Button(this, "9");
+    this->wdg<Button>("2").setWidgetCallback([](Widget *widget) {
+        ((Keyboard *)widget)->mKeyboardValue.push_back('2');
+        });
+    this->wdg<Button>("3").setWidgetCallback([](Widget *widget) {
+        ((Keyboard *)widget)->mKeyboardValue.push_back('3');
+        });
+    this->wdg<Button>("4").setWidgetCallback([](Widget *widget) {
+        ((Keyboard *)widget)->mKeyboardValue.push_back('4');
+        });
+    this->wdg<Button>("5").setWidgetCallback([](Widget *widget) {
+        ((Keyboard *)widget)->mKeyboardValue.push_back('5');
+        });
+    this->wdg<Button>("6").setWidgetCallback([](Widget *widget) {
+        ((Keyboard *)widget)->mKeyboardValue.push_back('6');
+        });
+    this->wdg<Button>("7").setWidgetCallback([](Widget *widget) {
+        ((Keyboard *)widget)->mKeyboardValue.push_back('7');
+        });
+    this->wdg<Button>("8").setWidgetCallback([](Widget *widget) {
+        ((Keyboard *)widget)->mKeyboardValue.push_back('8');
+        });
+    this->wdg<Button>("9").setWidgetCallback([](Widget *widget) {
+        ((Keyboard *)widget)->mKeyboardValue.push_back('9');
+        });
     Button *button_del = new Button(this, "", ENTYPO_ICON_LEFT_THIN);
-    Button *button0 = new Button(this, "0");
+    button_del->setWidgetCallback([](Widget *widget){
+      printf("num del catched\n");
+    });
+    this->wdg<Button>("0").setWidgetCallback([](Widget *widget) {
+        ((Keyboard *)widget)->mKeyboardValue.push_back('0');
+        });
     Button *button_ok = new Button(this, "↵");
+    button_ok->setWidgetCallback([](Widget *widget) {
+                printf("num ok pushed:%s\n", ((Keyboard *)widget)->mKeyboardValue.c_str());
+                ((Keyboard *)widget)->setVisible(false);
+                printf("num ok pushed after:%s\n", ((TextBox *)(((Keyboard *)widget)->parent()))->value().c_str());
+                ((Keyboard *)widget)->parent()->requestFocus();
+                ((TextBox *)(((Keyboard *)widget)->getTextBox()))->setValue(((Keyboard *)widget)->mKeyboardValue);
+        });
     /* 测试发现大小是 29，30 这里直接固定大小,但是随着字体大小的改变
      * 这个大小应该也要变化
      * */
     button_ok->setFixedSize(Vector2i(29, 30));
     button_del->setFixedSize(Vector2i(29, 30));
+    printf("keyboard parent=%p parentWindow=%p\n", mParent, mParentWindow);
   }
 }
 
@@ -285,6 +314,7 @@ void Keyboard::draw(SDL_Renderer* renderer)
   Widget::draw(renderer);
 }
 
+/* 键盘控件的鼠标事件处理函数核心还是遍历 children 节点的 mouseButtonEvent 处理函数 */
 bool Keyboard::mouseButtonEvent(const Vector2i &p, int button, bool down, int modifiers)
 {
     printf("catch keyboard (%d,%d)\n", (p - _pos).x, (p - _pos).y);
@@ -295,7 +325,8 @@ bool Keyboard::mouseButtonEvent(const Vector2i &p, int button, bool down, int mo
             /* 回调 child 的 mouseButtonEvent 函数 */
             child->mouseButtonEvent(p - _pos, button, down, modifiers))
         {
-            printf("get here now\n");
+            printf("get here now with keyboard\n");
+            return true;
         }
     }
 

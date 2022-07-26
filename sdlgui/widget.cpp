@@ -123,8 +123,10 @@ Widget *Widget::findWidget(const Vector2i &p)
     return contains(p) ? this : nullptr;
 }
 
+/* 处理窗口按键成员函数 */
 bool Widget::mouseButtonEvent(const Vector2i &p, int button, bool down, int modifiers)
 {
+  /* 遍历执行 child 的 mouseButtonEvent 成员函数 */
     for (auto it = mChildren.rbegin(); it != mChildren.rend(); ++it) 
     {
         Widget *child = *it;
@@ -138,7 +140,7 @@ bool Widget::mouseButtonEvent(const Vector2i &p, int button, bool down, int modi
 	{
 		/* 更新 parent 窗口 focus 到当前 widget */
         requestFocus();
-    	printf("child request focus\n");
+    	printf("widget child request focus\n");
 	}
 	printf("child done\n");
     return false;
@@ -247,6 +249,9 @@ Window *Widget::window()
         if (!widget)
             throw std::runtime_error(
                 "Widget:internal error (could not find parent window)");
+        /* dynamic_cast 一般用来通过基类的转换为派生类的对象指针
+         * 派生类的转换为基类的转换，使用普通的指针转换就可以了
+         * */
         Window *window = dynamic_cast<Window *>(widget);
         if (window)
             return window;
@@ -310,6 +315,7 @@ void Widget::requestFocus()
     /* 遍历更新当前 widget 的 parent 窗口 */
     while (widget->parent())
         widget = widget->parent();
+    /* 这里竟然强制转换成了Screen ？？？ */
     ((Screen *) widget)->updateFocus(this);
 }
 

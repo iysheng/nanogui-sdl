@@ -68,6 +68,10 @@ public:
     bool pushed() const { return mPushed; }
     void setPushed(bool pushed) { mPushed = pushed; }
 
+    /// Set the push callback (for widget type child button)
+    std::function<void(Widget *)> widgetCallback() const { return mWidgetCallback; }
+    void setWidgetCallback(const std::function<void(Widget *)> &callback) { mWidgetCallback = callback; }
+
     /// Set the push callback (for any type of button)
     std::function<void()> callback() const { return mCallback; }
     void setCallback(const std::function<void()> &callback) { mCallback = callback; }
@@ -110,6 +114,7 @@ protected:
 
     std::function<void()> mCallback;
     std::function<void(bool)> mChangeCallback;
+    std::function<void(Widget *)> mWidgetCallback;
     std::vector<Button *> mButtonGroup;
 
     struct AsyncTexture;

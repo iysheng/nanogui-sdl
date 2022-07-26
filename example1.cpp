@@ -68,6 +68,8 @@ public:
         /* 小部件网格 */
         {
           auto& window = wdg<Window>("Grid of small widgets");
+          printf("window addr=%p\n", &window);
+
           /* 确定了 window 的位置 */
           window.withPosition({100, 100});
           /* 创建一个新的布局 */
@@ -84,6 +86,7 @@ public:
           window.add<Label>("浮点数测试 :", "sans-bold");
           /* 创建 textBox */
           auto& textBox = window.wdg<TextBox>();
+          printf("textbox addr=%p\n", &textBox);
           textBox.setEditable(true);
           /* 设置控件大小 */
           textBox.setFixedSize(Vector2i(100, 20));
