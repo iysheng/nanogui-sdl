@@ -102,11 +102,11 @@ TTF_Font* getFont(const char* fontname, size_t ptsize)
 
     if (tmpFontname == "sans")
     {
-      newFont = TTF_OpenFont("/opt/jari_kiss_assets/red_font.ttf", 15);
+      newFont = TTF_OpenFont("/opt/jari_kiss_assets/red_font.ttf", ptsize);
     }
     else if (tmpFontname == "sans-bold")
     {
-      newFont = TTF_OpenFont("/opt/jari_kiss_assets/red_font.ttf", 15);
+      newFont = TTF_OpenFont("/opt/jari_kiss_assets/red_font.ttf", ptsize);
       TTF_SetFontStyle(newFont, TTF_STYLE_BOLD);
     }
     else if (tmpFontname == "icons")

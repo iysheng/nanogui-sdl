@@ -9,6 +9,7 @@
     BSD-style license that can be found in the LICENSE.txt file.
 */
 
+#include <atomic>
 #include <sdlgui/screen.h>
 #include <sdlgui/window.h>
 #include <sdlgui/layout.h>
@@ -86,14 +87,14 @@ public:
            * */
           swindow.add<Label>("        ", "sans-bold");
           swindow.add<Label>("设备状态", "sans-bold");
-          swindow.add<Label>("水平垂直角度(度)", "sans-bold");
-          swindow.add<Label>("水平垂直速度(度/秒)", "sans-bold");
+          swindow.add<Label>("水平/垂直角度(糖)", "sans-bold");
+          swindow.add<Label>("水平/垂直速度(糖/s)", "sans-bold");
           swindow.add<Label>("莫码信息", "sans-bold");
           swindow.add<Label>("绿灯状态", "sans-bold");
 
           swindow.add<Label>("灯光装置终端一", "sans-bold");
           swindow.add<Label>("在线", "sans");
-          swindow.add<Label>("120| 10", "sans");
+          swindow.add<Label>("120|10", "sans");
           swindow.children()[8]->setId("hspeed");
           //printf("size=%d id=%s\n", swindow.childCount(), swindow.children()[8]->id().c_str());
           swindow.add<Label>("20|10", "sans");
@@ -358,7 +359,7 @@ int main(int /* argc */, char ** /* argv */)
               {
                 Label *hspeed_value = dynamic_cast<Label *>(swindow->gfind("hspeed"));
                 
-                hspeed_value->setCaption(std::to_string(test));
+                hspeed_value->setCaption(std::to_string(test) + '|' + std::to_string(test+1));
               }
             }
 

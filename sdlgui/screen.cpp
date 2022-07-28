@@ -109,6 +109,7 @@ void Screen::initialize(SDL_Window* window)
         throw std::runtime_error("Could not initialize NanoVG!");
 
     mVisible = true;
+    /* 创建一个 Theme 对象 */
     mTheme = new Theme(mSDL_Renderer);
     mMousePos = { 0, 0 };
     mMouseState = mModifiers = 0;
