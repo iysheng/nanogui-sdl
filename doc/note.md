@@ -24,4 +24,4 @@ performLayout
                 fixedSize  如果定义了 fixedSize 那么会优先使用 fixedSize
                 setPositon
                 setSize
-                performLayout
+                performLayout 执行 child 的 performLayout

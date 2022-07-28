@@ -162,12 +162,9 @@ Keyboard::Keyboard(Widget *parent, Window *parentWindow, KeyboardType type)
   }
   else if (type == KeyboardType::NumberIP)
   {
-    AdvancedGridLayout *layout = new AdvancedGridLayout({30,30,30}, {30,30,30,30,30});
-    layout->setMargin(0);
+    AdvancedGridLayout *layout = new AdvancedGridLayout({34,34,34}, {34,34,34,34,34});
+    layout->setMargin(5);
     //layout->setColStretch(2, 1);
-    //layout->appendRow(15, 0.5f);
-    //layout->appendCol(15, 0.5f);
-    //Button *btn = new Button(this, "R");
     this->setLayout(layout);
     this->wdg<Button>("1").setWidgetCallback([](Widget *widget) {
         Keyboard *keyboard = dynamic_cast<Keyboard*>(widget);
@@ -246,14 +243,18 @@ Keyboard::Keyboard(Widget *parent, Window *parentWindow, KeyboardType type)
     /* 测试发现大小是 29，30 这里直接固定大小,但是随着字体大小的改变
      * 这个大小应该也要变化
      * */
-    //button_ok->setFixedSize(Vector2i(29 * 3, 30));
-    button_del->setFixedSize(Vector2i(29, 30));
+    button_ok->setFixedSize(Vector2i(30 * 3 + 4, 34));
+    button_del->setFixedSize(Vector2i(30, 34));
 
     int i = 0 , j = 0;
     for (; i < 4; i++)
       for (j = 0; j < 3; j++)
-        layout->setAnchor(mChildren[i*3+j], AdvancedGridLayout::Anchor(j, i, 1, 1));
-    layout->setAnchor(mChildren[i*3], AdvancedGridLayout::Anchor(0, i, 3, 1));
+      {
+        dynamic_cast<Button *>(mChildren[i*3+j])->setFixedSize(Vector2i(29, 30));
+        layout->setAnchor(mChildren[i*3+j], AdvancedGridLayout::Anchor(j, i, 1, 1, Alignment::Middle));
+      }
+    mChildren[i*3]->setFixedSize(Vector2i(34 + 29*2, 30));
+    layout->setAnchor(mChildren[i*3], AdvancedGridLayout::Anchor(0, i, 3, 1, Alignment::Middle));
     printf("keyboard parent=%p parentWindow=%p\n", mParent, mParentWindow);
   }
 }
@@ -317,7 +318,6 @@ void Keyboard::rendereBodyTexture(NVGcontext*& ctx, int& realw, int& realh, int 
 
 void Keyboard::performLayout(SDL_Renderer *ctx) 
 {
-    printf("%d keychildren size\n", mChildren.size());
     if (mLayout || mChildren.size() != 1) 
     {
         Widget::performLayout(ctx);

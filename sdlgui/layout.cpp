@@ -502,10 +502,6 @@ void AdvancedGridLayout::computeLayout(SDL_Renderer *ctx, const Widget *widget,
                 int ps = w->preferredSize(ctx)[axis], fs = w->fixedSize()[axis];
                 int targetSize = fs ? fs : ps;
 
-                printf("pos(%d,%d) size(%d,%d) grid(%d,%d)\n", anchor.pos[0],
-                    anchor.pos[1], anchor.size[0], anchor.size[1],
-                    grid.size(), grid.size()
-                    );
                 if (anchor.pos[axis] + anchor.size[axis] > (int) grid.size())
                     throw std::runtime_error(
                         "Advanced grid layout: widget is out of bounds: " +
