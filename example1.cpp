@@ -65,6 +65,49 @@ public:
     TestWindow( SDL_Window* pwindow, int rwidth, int rheight )
       : Screen( pwindow, Vector2i(rwidth, rheight), "SDL_gui Test")
       {
+        /* 设备状态窗口 */
+        {
+          auto& swindow = wdg<Window>("设备状态");
+          swindow.setId("sWindow");
+          printf("swindow addr=%p\n", &swindow);
+
+          /* 确定了 swindow 的位置 */
+          swindow.withPosition({30, 340});
+          /* 创建一个新的布局 */
+          auto* layout = new GridLayout(Orientation::Horizontal, 6,
+                                         Alignment::Middle, 15, 5);
+          layout->setColAlignment({ Alignment::Maximum, Alignment::Fill });
+          layout->setSpacing(0, 10);
+          /* 定义了这个窗口的布局 */
+          swindow.setLayout(layout);
+
+          /* 调用 add 函数模板
+           * 将新创建的 label 控件关联到 swindow 作为其 parent
+           * */
+          swindow.add<Label>("        ", "sans-bold");
+          swindow.add<Label>("设备状态", "sans-bold");
+          swindow.add<Label>("水平垂直角度(度)", "sans-bold");
+          swindow.add<Label>("水平垂直速度(度/秒)", "sans-bold");
+          swindow.add<Label>("莫码信息", "sans-bold");
+          swindow.add<Label>("绿灯状态", "sans-bold");
+
+          swindow.add<Label>("灯光装置终端一", "sans-bold");
+          swindow.add<Label>("在线", "sans");
+          swindow.add<Label>("120| 10", "sans");
+          swindow.children()[8]->setId("hspeed");
+          //printf("size=%d id=%s\n", swindow.childCount(), swindow.children()[8]->id().c_str());
+          swindow.add<Label>("20|10", "sans");
+          swindow.add<Label>("GO", "sans");
+          swindow.add<Label>("已授权", "sans");
+
+          swindow.add<Label>("灯光装置终端二", "sans-bold");
+          swindow.add<Label>("离线", "sans");
+          swindow.add<Label>("-|-", "sans");
+          swindow.add<Label>("-|-", "sans");
+          swindow.add<Label>("--", "sans");
+          swindow.add<Label>("已授权", "sans");
+        }
+
         /* 小部件网格 */
         {
           auto& window = wdg<Window>("Grid of small widgets");
@@ -307,6 +350,17 @@ int main(int /* argc */, char ** /* argv */)
 
             /* 绘制内容 */
             screen->drawAll();
+            Window * swindow = dynamic_cast<Window *>(screen->gfind("sWindow"));
+            static int test;
+            if (swindow)
+            {
+              if (test++ % 30 == 1)
+              {
+                Label *hspeed_value = dynamic_cast<Label *>(swindow->gfind("hspeed"));
+                
+                hspeed_value->setCaption(std::to_string(test));
+              }
+            }
 
             // Render the rect to the screen
             SDL_RenderPresent(renderer);
