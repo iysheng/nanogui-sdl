@@ -73,7 +73,7 @@ public:
           printf("swindow addr=%p\n", &swindow);
 
           /* 确定了 swindow 的位置 */
-          swindow.withPosition({30, 340});
+          swindow.withPosition({0, 550});
           /* 创建一个新的布局 */
           auto* layout = new GridLayout(Orientation::Horizontal, 6,
                                          Alignment::Middle, 15, 5);
@@ -94,19 +94,45 @@ public:
 
           swindow.add<Label>("灯光装置终端一", "sans-bold");
           swindow.add<Label>("在线", "sans");
-          swindow.add<Label>("120|10", "sans");
+          swindow.add<Label>("120/10", "sans");
           swindow.children()[8]->setId("hspeed");
           //printf("size=%d id=%s\n", swindow.childCount(), swindow.children()[8]->id().c_str());
-          swindow.add<Label>("20|10", "sans");
+          swindow.add<Label>("20/10", "sans");
           swindow.add<Label>("GO", "sans");
           swindow.add<Label>("已授权", "sans");
 
           swindow.add<Label>("灯光装置终端二", "sans-bold");
           swindow.add<Label>("离线", "sans");
-          swindow.add<Label>("-|-", "sans");
-          swindow.add<Label>("-|-", "sans");
+          swindow.add<Label>("-/-", "sans");
+          swindow.add<Label>("-/-", "sans");
           swindow.add<Label>("--", "sans");
           swindow.add<Label>("已授权", "sans");
+        }
+
+        /* 小部件网格 */
+        {
+          auto& cwindow = wdg<Window>("灯光功能");
+
+          /* 确定了 cwindow 的位置 */
+          cwindow.withPosition({0, 670});
+          /* 创建一个新的布局 */
+          GridLayout * layout = new GridLayout(Orientation::Horizontal, 4,
+                                         Alignment::Middle, 15, 5);
+          layout->setColAlignment({ Alignment::Maximum, Alignment::Fill });
+          layout->setSpacing(0, 10);
+          /* 定义了这个窗口的布局 */
+          cwindow.setLayout(layout);
+          cwindow.add<Label>("绿灯", "sans-bold");
+          cwindow.add<Button>("常亮", [&] {
+                            msgdialog(MessageDialog::Type::Information, "灯具控制", "确认要打开绿光么?",
+                                      [](int result) { cout << "Dialog result: " << result << endl; }); });
+          cwindow.add<Button>("绿闪");
+          cwindow.add<Button>("莫码");
+
+          cwindow.add<Label>("白灯", "sans-bold");
+          cwindow.add<Button>("常亮");
+          cwindow.add<Button>("白闪");
+          cwindow.add<Button>("莫码");
         }
 
         /* 小部件网格 */
@@ -358,8 +384,7 @@ int main(int /* argc */, char ** /* argv */)
               if (test++ % 30 == 1)
               {
                 Label *hspeed_value = dynamic_cast<Label *>(swindow->gfind("hspeed"));
-                
-                hspeed_value->setCaption(std::to_string(test) + '|' + std::to_string(test+1));
+                hspeed_value->setCaption(std::to_string(test) + '/' + std::to_string(test+1));
               }
             }
 

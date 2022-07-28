@@ -319,7 +319,7 @@ void Button::draw(SDL_Renderer* renderer)
     if (!mEnabled)
       sdlTextColor = mTheme->mDisabledTextColor;
 
-    mTheme->getTexAndRectUtf8(renderer, _captionTex, 0, 0, mCaption.c_str(), "sans-bold", fontSize, sdlTextColor);
+    mTheme->getTexAndRectUtf8(renderer, _captionTex, 0, 0, mCaption.c_str(), "sans", fontSize, sdlTextColor);
   }
 
   Vector2f center(ap.x + width() * 0.5f, ap.y + height() * 0.5f);

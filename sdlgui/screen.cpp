@@ -292,7 +292,7 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
             }
         }
 
-        /* 按下还是探开 */
+        /* 按下还是弹开 */
         if (action == SDL_MOUSEBUTTONDOWN)
             mMouseState |= 1 << button;
         else
@@ -313,7 +313,7 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
         }*/
 
         if (action == SDL_MOUSEBUTTONDOWN && button == SDL_BUTTON_LEFT) {
-            printf("catch mouse left button\n");
+            printf("catch mouse left button(%d,%d)\n", mMousePos.x, mMousePos.y);
             mDragWidget = findWidget(mMousePos);
             /* 如果没有找到有效的 widget,即修正为 nullptr */
             if (mDragWidget == this)
