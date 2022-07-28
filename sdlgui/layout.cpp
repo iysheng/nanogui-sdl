@@ -269,6 +269,7 @@ void GridLayout::computeLayout(SDL_Renderer *ctx, const Widget *widget, std::vec
     }
 }
 
+/* layout 的 performLayout 成员函数 */
 void GridLayout::performLayout(SDL_Renderer *ctx, Widget *widget) const 
 {
   Vector2i fs_w = widget->fixedSize();
@@ -316,10 +317,11 @@ void GridLayout::performLayout(SDL_Renderer *ctx, Widget *widget) const
     /* 确定一个起始向量 */
     Vector2i start = Vector2i::Constant(mMargin) + extra;
 
+    /* 获取 child 节点的数量大小 */
     size_t numChildren = widget->children().size();
     size_t child = 0;
 
-    /* 定义一个位置向量 */
+    /* 定义一个起始的位置向量 !!! */
     Vector2i pos = start;
     for (int i2 = 0; i2 < dim[axis2]; i2++) 
     {
@@ -381,10 +383,13 @@ void GridLayout::performLayout(SDL_Renderer *ctx, Widget *widget) const
 AdvancedGridLayout::AdvancedGridLayout(const std::vector<int> &cols, const std::vector<int> &rows, int margin)
  : mCols(cols), mRows(rows), mMargin(margin) 
 {
+  /* 修改 mColStretch vector 的大小，数量不足时候以 0 填充 */
     mColStretch.resize(mCols.size(), 0);
+  /* 修改 mRowStretch vector 的大小，数量不足时候以 0 填充 */
     mRowStretch.resize(mRows.size(), 0);
 }
 
+/* 获取该 layout 下自动计算控件大小函数 */
 Vector2i AdvancedGridLayout::preferredSize(SDL_Renderer *ctx, const Widget *widget) const
 {
     /* Compute minimum row / column sizes */
@@ -405,7 +410,9 @@ Vector2i AdvancedGridLayout::preferredSize(SDL_Renderer *ctx, const Widget *widg
 
 void AdvancedGridLayout::performLayout(SDL_Renderer *ctx, Widget *widget) const 
 {
+  /* 定义在栈上的向量 */
     std::vector<int> grid[2];
+    /* 会将计算的结果保存到 grid ？？？ */
     computeLayout(ctx, widget, grid);
 
     grid[0].insert(grid[0].begin(), mMargin);
@@ -424,6 +431,7 @@ void AdvancedGridLayout::performLayout(SDL_Renderer *ctx, Widget *widget) const
         {
             if (!w->visible())
                 continue;
+            /* 获取指定 child 的 anchor 信息 */
             Anchor anchor = this->anchor(w);
 
             int itemPos = grid[axis][anchor.pos[axis]];
@@ -456,6 +464,7 @@ void AdvancedGridLayout::performLayout(SDL_Renderer *ctx, Widget *widget) const
     }
 }
 
+/* 计算 */
 void AdvancedGridLayout::computeLayout(SDL_Renderer *ctx, const Widget *widget,
                                        std::vector<int> *_grid) const 
 {
@@ -481,6 +490,7 @@ void AdvancedGridLayout::computeLayout(SDL_Renderer *ctx, const Widget *widget,
 
         for (int phase = 0; phase < 2; ++phase) 
         {
+          /* mAnchor 是一个无序的 map */
             for (auto pair : mAnchor) {
                 const Widget *w = pair.first;
                 if (!w->visible())
@@ -488,9 +498,14 @@ void AdvancedGridLayout::computeLayout(SDL_Renderer *ctx, const Widget *widget,
                 const Anchor &anchor = pair.second;
                 if ((anchor.size[axis] == 1) != (phase == 0))
                     continue;
+                /* 计算这个窗口的宽和高 */
                 int ps = w->preferredSize(ctx)[axis], fs = w->fixedSize()[axis];
                 int targetSize = fs ? fs : ps;
 
+                printf("pos(%d,%d) size(%d,%d) grid(%d,%d)\n", anchor.pos[0],
+                    anchor.pos[1], anchor.size[0], anchor.size[1],
+                    grid.size(), grid.size()
+                    );
                 if (anchor.pos[axis] + anchor.size[axis] > (int) grid.size())
                     throw std::runtime_error(
                         "Advanced grid layout: widget is out of bounds: " +

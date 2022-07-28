@@ -98,7 +98,6 @@ public:
           textBox.setFormat("[-]?[0-9]*\\.?[0-9]+");
           textBox.setAlignment(TextBox::Alignment::Left);
 
-
           window.add<Label>("设备IP :", "sans-bold");
           auto& textBox2 = window.wdg<TextBox>("", "", KeyboardType::NumberIP);
           textBox2.setEditable(true);

@@ -162,7 +162,13 @@ Keyboard::Keyboard(Widget *parent, Window *parentWindow, KeyboardType type)
   }
   else if (type == KeyboardType::NumberIP)
   {
-    setLayout(new GridLayout(Orientation::Horizontal, 3, Alignment::Middle, 5, 5));
+    AdvancedGridLayout *layout = new AdvancedGridLayout({30,30,30}, {30,30,30,30,30});
+    layout->setMargin(0);
+    //layout->setColStretch(2, 1);
+    //layout->appendRow(15, 0.5f);
+    //layout->appendCol(15, 0.5f);
+    //Button *btn = new Button(this, "R");
+    this->setLayout(layout);
     this->wdg<Button>("1").setWidgetCallback([](Widget *widget) {
         Keyboard *keyboard = dynamic_cast<Keyboard*>(widget);
         keyboard->mKeyboardValue.push_back('1');
@@ -242,6 +248,12 @@ Keyboard::Keyboard(Widget *parent, Window *parentWindow, KeyboardType type)
      * */
     //button_ok->setFixedSize(Vector2i(29 * 3, 30));
     button_del->setFixedSize(Vector2i(29, 30));
+
+    int i = 0 , j = 0;
+    for (; i < 4; i++)
+      for (j = 0; j < 3; j++)
+        layout->setAnchor(mChildren[i*3+j], AdvancedGridLayout::Anchor(j, i, 1, 1));
+    layout->setAnchor(mChildren[i*3], AdvancedGridLayout::Anchor(0, i, 3, 1));
     printf("keyboard parent=%p parentWindow=%p\n", mParent, mParentWindow);
   }
 }
@@ -305,6 +317,7 @@ void Keyboard::rendereBodyTexture(NVGcontext*& ctx, int& realw, int& realh, int 
 
 void Keyboard::performLayout(SDL_Renderer *ctx) 
 {
+    printf("%d keychildren size\n", mChildren.size());
     if (mLayout || mChildren.size() != 1) 
     {
         Widget::performLayout(ctx);

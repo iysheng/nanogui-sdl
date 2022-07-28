@@ -245,6 +245,7 @@ public:
 protected:
     ref<Screen> mScreen;
     ref<Window> mWindow;
+    /* ref 是一个模板类 */
     ref<AdvancedGridLayout> mLayout;
     std::vector<std::function<void()>> mRefreshCallbacks;
     std::string mGroupFontName = "sans-bold";

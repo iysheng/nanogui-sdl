@@ -264,6 +264,7 @@ public:
             align[0] = horiz; align[1] = vert;
         }
 
+        /* 锚点的构造函数，指定了位置和大小 */
         Anchor(int x, int y, int w, int h,
               Alignment horiz = Alignment::Fill,
               Alignment vert = Alignment::Fill) {

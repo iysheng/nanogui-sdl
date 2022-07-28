@@ -155,7 +155,7 @@ void Screen::setSize(const Vector2i &size)
 /* 窗口绘制 */
 void Screen::drawAll()
 {
-  drawContents(); /* 徐函数动态链编 */
+  drawContents(); /* 虚函数动态链编 */
   drawWidgets(); 
 }
 
