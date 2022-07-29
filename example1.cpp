@@ -70,16 +70,19 @@ void do_with_green_light_normal(Widget *widget, int choose)
   printf("button widget window parent=%p\n", widget->window()->parent());
 #if 1
   Window * setWindow = new Window(widget->window()->parent(), "www参数配置");
+  setWindow->setLayout(new BoxLayout(Orientation::Vertical,
+                          Alignment::Middle, 0, 15));
+
+  Widget * configWidget = setWindow->add<Widget>();
   GridLayout * layout = new GridLayout(Orientation::Horizontal, 2,
                                  Alignment::Middle, 15, 5);
   layout->setColAlignment({ Alignment::Maximum, Alignment::Fill });
   layout->setSpacing(0, 10);
   /* 定义了这个窗口的布局 */
-  setWindow->setLayout(layout);
-
-  setWindow->add<Label>("设备 IP :", "sans-bold");
+  configWidget->setLayout(layout);
+  configWidget->add<Label>("设备 IP :", "sans-bold");
   /* 创建 textBox */
-  auto& textBox = setWindow->wdg<TextBox>();
+  auto& textBox = configWidget->wdg<TextBox>();
   textBox.setEditable(true);
   /* 设置控件大小 */
   textBox.setFixedSize(Vector2i(100, 20));
@@ -91,8 +94,8 @@ void do_with_green_light_normal(Widget *widget, int choose)
   textBox.setFormat("[-]?[0-9]*\\.?[0-9]+");
   textBox.setAlignment(TextBox::Alignment::Left);
 
-  setWindow->add<Label>("摄像头1 IP:", "sans-bold");
-  auto& textBox2 = setWindow->wdg<TextBox>("", "", KeyboardType::NumberIP);
+  configWidget->add<Label>("摄像头1 IP:", "sans-bold");
+  auto& textBox2 = configWidget->wdg<TextBox>("", "", KeyboardType::NumberIP);
   textBox2.setEditable(true);
   textBox2.setFixedSize(Vector2i(150, 20));
   textBox2.setValue("192.168.255.1");
@@ -101,19 +104,12 @@ void do_with_green_light_normal(Widget *widget, int choose)
   textBox2.setAlignment(TextBox::Alignment::Left);
   widget->parent()->parent()->setVisible(false);
 
-
-#if 0
   Widget *btWidget = setWindow->add<Widget>();
   btWidget->setLayout(new BoxLayout(Orientation::Horizontal,
-                                  Alignment::Fill, 0, 15));
+                                  Alignment::Middle, 0, 15));
   btWidget->add<Button>("返回", [&]{std::cout << "返回" << std::endl;});
   btWidget->add<Button>("确认", [&]{std::cout << "确认" << std::endl;});
-#else
-  setWindow->add<Button>("返回", [&]{std::cout << "返回" << std::endl;});
-  setWindow->add<Button>("确认", [&]{std::cout << "确认" << std::endl;});
-#endif
   red_debug_lite("window parent %p ww parent %p", widget->window()->parent(), widget->window()->parent());
-
 
   Screen * screen = dynamic_cast<Screen *>(widget->window()->parent());
   red_debug_lite("screen=%p", screen);
