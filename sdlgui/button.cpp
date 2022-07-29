@@ -308,6 +308,7 @@ void Button::draw(SDL_Renderer* renderer)
   Widget::draw(renderer);
 
   Vector2i ap = absolutePosition();
+  //red_debug_lite("btn pos=%d,%d size=%d,%d", ap.x, ap.y, width(), height());
   /* 绘制窗体本身 */
   drawBody(renderer);
 

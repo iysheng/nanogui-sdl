@@ -44,13 +44,13 @@ public:
                   const std::string &message,
                   const std::string &confirmButtonText,
                   const std::string &cancleButtonText,
-                  const std::function<void(int)> &callback )
+                  const std::function<void(Widget *, int)> &callback )
       : MessageDialog(parent, type, title, message, confirmButtonText, "", cancleButtonText, false)
     { setCallback(callback); }
 
     MessageDialog(Widget *parent, Type type, const std::string &title,
       const std::string &message,
-      const std::function<void(int)> &callback)
+      const std::function<void(Widget *, int)> &callback)
       : MessageDialog(parent, type, title, message)
     {
       setCallback(callback);
@@ -59,13 +59,14 @@ public:
     Label *messageLabel() { return mMessageLabel; }
     const Label *messageLabel() const { return mMessageLabel; }
 
-    std::function<void(int)> callback() const { return mCallback; }
-    void setCallback(const std::function<void(int)> &callback) { mCallback = callback; }
+    std::function<void(Widget *, int)> callback() const { return mCallback; }
+    void setCallback(const std::function<void(Widget *, int)> &callback) { mCallback = callback; }
 
-    MessageDialog& withCallback(const std::function<void(int)> &callback)
+    MessageDialog& withCallback(const std::function<void(Widget *, int)> &callback)
     { setCallback( callback ); return *this; }
 protected:
-    std::function<void(int)> mCallback;
+    std::function<void(Widget *, int)> mCallback;
+    Button *mSetButton;
     Label *mMessageLabel;
 };
 

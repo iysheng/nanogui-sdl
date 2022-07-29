@@ -211,6 +211,7 @@ void Widget::addChild(int index, Widget * widget)
     mChildren.insert(mChildren.begin() + index, widget);
     widget->incRef();
     widget->setParent(this);
+    //red_debug_lite("this=%p", this);
 	/* 关联 theme */
     widget->setTheme(mTheme);
 }

@@ -59,10 +59,10 @@ MessageDialog::MessageDialog(Widget *parent, Type type, const std::string &title
 #endif
 
 MessageDialog::MessageDialog(Widget *parent, Type type, const std::string &title,
-              const std::string &message ,
-              const std::string &cancleButtonText ,
-              const std::string &setButtonText ,
-              const std::string &confirmButtonText , bool setButton)
+              const std::string &message,
+              const std::string &confirmButtonText,
+              const std::string &setButtonText,
+              const std::string &cancleButtonText, bool setButton)
 
   : Window(parent, title)
 {
@@ -89,14 +89,17 @@ MessageDialog::MessageDialog(Widget *parent, Type type, const std::string &title
                                     Alignment::Middle, 0, 15));
 
     Button *button = new Button(panel2, cancleButtonText, ENTYPO_ICON_CHECK);
-    button->setCallback([&] { if (mCallback) mCallback(0); dispose(); });
+    button->setCallback([&] { if (mCallback) mCallback(NULL, 0); dispose(); });
     if (setButton)
     {
-        button = new Button(panel2, setButtonText, ENTYPO_ICON_CIRCLED_CROSS);
-        button->setCallback([&] { if (mCallback) mCallback(2); dispose(); });
+        mSetButton = new Button(panel2, setButtonText, ENTYPO_ICON_CIRCLED_CROSS);
+        mSetButton->setCallback([&] { if (mCallback) mCallback(mSetButton, 2); //dispose();
+        });
     }
     button = new Button(panel2, confirmButtonText, ENTYPO_ICON_CHECK);
-    button->setCallback([&] { if (mCallback) mCallback(1); dispose(); });
+    button->setCallback([&] { if (mCallback) mCallback(NULL, 1); dispose(); });
+    red_debug_lite("mSetButton:%p parent=%p this=%p\n",
+        mSetButton, mSetButton->parent(), this);
     /* 居中 */
     center();
     requestFocus();

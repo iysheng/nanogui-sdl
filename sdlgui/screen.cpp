@@ -104,6 +104,7 @@ void Screen::initialize(SDL_Window* window)
     SDL_GetWindowSize( window, &mSize[0], &mSize[1]);
     SDL_GetWindowSize( window, &mFBSize[0], &mFBSize[1]);
     mSDL_Renderer = SDL_GetRenderer(window);
+    red_debug_lite("render=%p screen=%p", mSDL_Renderer, this);
     
     if (mSDL_Renderer == nullptr)
         throw std::runtime_error("Could not initialize NanoVG!");

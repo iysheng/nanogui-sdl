@@ -59,6 +59,81 @@ using std::endl;
 
 using namespace sdlgui;
 
+void do_with_green_light_normal(Widget *widget, int choose)
+{
+  std::cout << "green light normal:" << choose << std::endl;
+  if (choose != 2)
+  {
+    return;
+  }
+  printf("button widget=%p parent=%p\n", widget, widget->parent());
+  printf("button widget window parent=%p\n", widget->window()->parent());
+#if 1
+  Window * setWindow = new Window(widget->window()->parent(), "www参数配置");
+  GridLayout * layout = new GridLayout(Orientation::Horizontal, 2,
+                                 Alignment::Middle, 15, 5);
+  layout->setColAlignment({ Alignment::Maximum, Alignment::Fill });
+  layout->setSpacing(0, 10);
+  /* 定义了这个窗口的布局 */
+  setWindow->setLayout(layout);
+
+  setWindow->add<Label>("设备 IP :", "sans-bold");
+  /* 创建 textBox */
+  auto& textBox = setWindow->wdg<TextBox>();
+  textBox.setEditable(true);
+  /* 设置控件大小 */
+  textBox.setFixedSize(Vector2i(100, 20));
+  textBox.setValue("50");
+  textBox.setUnits("GiB");
+  textBox.setDefaultValue("0.0");
+  /* 设置字体大小 */
+  textBox.setFontSize(16);
+  textBox.setFormat("[-]?[0-9]*\\.?[0-9]+");
+  textBox.setAlignment(TextBox::Alignment::Left);
+
+  setWindow->add<Label>("摄像头1 IP:", "sans-bold");
+  auto& textBox2 = setWindow->wdg<TextBox>("", "", KeyboardType::NumberIP);
+  textBox2.setEditable(true);
+  textBox2.setFixedSize(Vector2i(150, 20));
+  textBox2.setValue("192.168.255.1");
+  textBox2.setFontSize(16);
+  //textBox2.setFormat("[1-9][0-9]*");
+  textBox2.setAlignment(TextBox::Alignment::Left);
+  widget->parent()->parent()->setVisible(false);
+
+
+#if 0
+  Widget *btWidget = setWindow->add<Widget>();
+  btWidget->setLayout(new BoxLayout(Orientation::Horizontal,
+                                  Alignment::Fill, 0, 15));
+  btWidget->add<Button>("返回", [&]{std::cout << "返回" << std::endl;});
+  btWidget->add<Button>("确认", [&]{std::cout << "确认" << std::endl;});
+#else
+  setWindow->add<Button>("返回", [&]{std::cout << "返回" << std::endl;});
+  setWindow->add<Button>("确认", [&]{std::cout << "确认" << std::endl;});
+#endif
+  red_debug_lite("window parent %p ww parent %p", widget->window()->parent(), widget->window()->parent());
+
+
+  Screen * screen = dynamic_cast<Screen *>(widget->window()->parent());
+  red_debug_lite("screen=%p", screen);
+  SDL_Renderer * render = screen->sdlRenderer();
+  screen->performLayout(render);
+  setWindow->center();
+  red_debug_lite("setWindow size=%d,%d", setWindow->width(), setWindow->height());
+  setWindow->requestFocus();
+#else
+  MessageDialog *msg = dynamic_cast<MessageDialog *>(widget->parent()->parent());
+  msg->add<Label>("oh no");
+  Widget *wdg = dynamic_cast<Widget *>(widget->parent());
+  wdg->add<Label>("oh no");
+#endif
+//setWindow.add<Label>("oh no", "sans");
+  //std::cout << "what's wrong:" << choose << "setWindow:" << &setWindow << std::endl;
+
+  //setWindow.requestFocus();
+}
+
 /* 测试窗口类 */
 class TestWindow : public Screen
 {
@@ -137,8 +212,7 @@ public:
 
         /* 小部件网格 */
         {
-          auto& window = wdg<Window>("Grid of small widgets");
-          printf("window addr=%p\n", &window);
+          auto& window = wdg<Window>("测试 window");
 
           /* 确定了 window 的位置 */
           window.withPosition({100, 100});
@@ -177,8 +251,8 @@ public:
           //textBox2.setFormat("[1-9][0-9]*");
           textBox2.setAlignment(TextBox::Alignment::Left);
 
-          auto* key_layout = new GridLayout(Orientation::Horizontal, 2,
-                                         Alignment::Middle, 15, 3);
+          //auto* key_layout = new GridLayout(Orientation::Horizontal, 2,
+          //                               Alignment::Middle, 15, 3);
           //textBox2.keyboard().setLayout(key_layout);
           //textBox2.keyboard().setFixedSize(Vector2i(50, 50));
                       //.withLayout<GroupLayout>();
