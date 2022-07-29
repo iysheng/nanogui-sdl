@@ -723,6 +723,7 @@ inline bool nvgIsImageIcon(int value) { return value < 1024; }
 /// Determine whether an icon ID is a font-based icon (e.g. from the entypo.ttf font)
 inline bool nvgIsFontIcon(int value) { return value >= 1024; }
 
+#define red_debug(format, ...) {fprintf(stderr, "[RED][%s %s() L:%d] > " format "\n", __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__);}
 NAMESPACE_END(sdlgui)
 
 #endif

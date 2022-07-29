@@ -76,7 +76,7 @@ public:
           swindow.withPosition({0, 550});
           /* 创建一个新的布局 */
           auto* layout = new GridLayout(Orientation::Horizontal, 6,
-                                         Alignment::Middle, 15, 5);
+                                         Alignment::Minimum, 15, 5);
           layout->setColAlignment({ Alignment::Maximum, Alignment::Fill });
           layout->setSpacing(0, 10);
           /* 定义了这个窗口的布局 */
@@ -124,8 +124,8 @@ public:
           cwindow.setLayout(layout);
           cwindow.add<Label>("绿灯", "sans-bold");
           cwindow.add<Button>("常亮", [&] {
-                            msgdialog(MessageDialog::Type::Information, "灯具控制", "确认要打开绿光么?",
-                                      [](int result) { cout << "Dialog result: " << result << endl; }); });
+              msgdialog(MessageDialog::Type::Choose, "灯具控制", "确认要打开绿光么?",
+              do_with_green_light_normal); });
           cwindow.add<Button>("绿闪");
           cwindow.add<Button>("莫码");
 

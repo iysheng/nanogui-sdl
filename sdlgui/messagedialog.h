@@ -23,21 +23,29 @@ public:
     {
         Information,
         Question,
-        Warning
+        Warning,
+        Choose,
     };
 
+#if 0
     MessageDialog(Widget *parent, Type type, const std::string &title = "Untitled",
                   const std::string &message = "Message",
                   const std::string &buttonText = "OK",
                   const std::string &altButtonText = "Cancel", bool altButton = false);
+#endif
+
+    MessageDialog(Widget *parent, Type type, const std::string &title = "FuncChoice",
+                  const std::string &message = "Make your choice",
+                  const std::string &confirmButtonText = "确认",
+                  const std::string &setButtonText = "参数配置",
+                  const std::string &cancleButtonText = "取消", bool setButton = true);
 
     MessageDialog(Widget *parent, Type type, const std::string &title,
                   const std::string &message,
-                  const std::string &buttonText,
-                  const std::string &altButtonText,
-                  bool altButton,
+                  const std::string &confirmButtonText,
+                  const std::string &cancleButtonText,
                   const std::function<void(int)> &callback )
-      : MessageDialog(parent, type, title, message, buttonText, altButtonText, altButton)
+      : MessageDialog(parent, type, title, message, confirmButtonText, "", cancleButtonText, false)
     { setCallback(callback); }
 
     MessageDialog(Widget *parent, Type type, const std::string &title,

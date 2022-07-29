@@ -17,6 +17,7 @@
 
 NAMESPACE_BEGIN(sdlgui)
 
+#if 0
 MessageDialog::MessageDialog(Widget *parent, Type type, const std::string &title,
               const std::string &message,
               const std::string &buttonText,
@@ -31,7 +32,7 @@ MessageDialog::MessageDialog(Widget *parent, Type type, const std::string &title
     panel1->setLayout(new BoxLayout(Orientation::Horizontal,
                                     Alignment::Middle, 10, 15));
     int icon = 0;
-    switch (type) 
+    switch (type)
     {
         case Type::Information: icon = ENTYPO_ICON_CIRCLED_INFO; break;
         case Type::Question: icon = ENTYPO_ICON_CIRCLED_HELP; break;
@@ -44,13 +45,58 @@ MessageDialog::MessageDialog(Widget *parent, Type type, const std::string &title
     panel2->setLayout(new BoxLayout(Orientation::Horizontal,
                                     Alignment::Middle, 0, 15));
 
-    if (altButton) 
+    if (altButton)
     {
         Button *button = new Button(panel2, altButtonText, ENTYPO_ICON_CIRCLED_CROSS);
         button->setCallback([&] { if (mCallback) mCallback(1); dispose(); });
     }
     Button *button = new Button(panel2, buttonText, ENTYPO_ICON_CHECK);
     button->setCallback([&] { if (mCallback) mCallback(0); dispose(); });
+    /* 居中 */
+    center();
+    requestFocus();
+}
+#endif
+
+MessageDialog::MessageDialog(Widget *parent, Type type, const std::string &title,
+              const std::string &message ,
+              const std::string &cancleButtonText ,
+              const std::string &setButtonText ,
+              const std::string &confirmButtonText , bool setButton)
+
+  : Window(parent, title)
+{
+    setLayout(new BoxLayout(Orientation::Vertical,
+                            Alignment::Middle, 10, 10));
+    setModal(true);
+
+    Widget *panel1 = new Widget(this);
+    panel1->setLayout(new BoxLayout(Orientation::Horizontal,
+                                    Alignment::Middle, 10, 15));
+    int icon = 0;
+    switch (type)
+    {
+        case Type::Information: icon = ENTYPO_ICON_CIRCLED_INFO; break;
+        case Type::Question: icon = ENTYPO_ICON_CIRCLED_HELP; break;
+        case Type::Warning: icon = ENTYPO_ICON_WARNING; break;
+        case Type::Choose: icon = ENTYPO_ICON_CIRCLED_HELP; break;
+    }
+    Label *iconLabel = new Label(panel1, std::string(utf8(icon).data()), "icons");
+    iconLabel->setFontSize(50);
+    mMessageLabel = new Label(panel1, message);
+    Widget *panel2 = new Widget(this);
+    panel2->setLayout(new BoxLayout(Orientation::Horizontal,
+                                    Alignment::Middle, 0, 15));
+
+    Button *button = new Button(panel2, cancleButtonText, ENTYPO_ICON_CHECK);
+    button->setCallback([&] { if (mCallback) mCallback(0); dispose(); });
+    if (setButton)
+    {
+        button = new Button(panel2, setButtonText, ENTYPO_ICON_CIRCLED_CROSS);
+        button->setCallback([&] { if (mCallback) mCallback(2); dispose(); });
+    }
+    button = new Button(panel2, confirmButtonText, ENTYPO_ICON_CHECK);
+    button->setCallback([&] { if (mCallback) mCallback(1); dispose(); });
     /* 居中 */
     center();
     requestFocus();

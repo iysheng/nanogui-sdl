@@ -186,6 +186,7 @@ public:
             return mDefaultAlignment[axis];
     }
 
+    /* 首先是列，然后是行 */
     void setColAlignment(Alignment value) { mDefaultAlignment[0] = value; }
     void setRowAlignment(Alignment value) { mDefaultAlignment[1] = value; }
     void setColAlignment(const std::vector<Alignment> &value) { mAlignment[0] = value; }
@@ -203,6 +204,7 @@ protected:
 protected:
     Orientation mOrientation;
     Alignment mDefaultAlignment[2];
+    /* 向量数组类型成员 */
     std::vector<Alignment> mAlignment[2];
     int mResolution;
     Vector2i mSpacing;

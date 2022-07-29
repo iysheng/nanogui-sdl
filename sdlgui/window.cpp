@@ -291,6 +291,7 @@ void Window::draw(SDL_Renderer* renderer)
   Widget::draw(renderer);
 }
 
+/* 类似注销这个 window */
 void Window::dispose() 
 {
     Widget *widget = this;
