@@ -89,18 +89,20 @@ MessageDialog::MessageDialog(Widget *parent, Type type, const std::string &title
     panel2->setLayout(new BoxLayout(Orientation::Horizontal,
                                     Alignment::Middle, 0, 15));
 
-    Button *button = new Button(panel2, cancleButtonText, ENTYPO_ICON_CHECK);
+    Button *button = new Button(panel2, cancleButtonText, ENTYPO_ICON_CROSS);
     button->setCallback([&] { if (mCallback) mCallback(NULL, 0); dispose(); });
     if (setButton)
     {
-        mSetButton = new Button(panel2, setButtonText, ENTYPO_ICON_CIRCLED_CROSS);
+        mSetButton = new Button(panel2, setButtonText);
         mSetButton->setCallback([&] { if (mCallback) mCallback(mSetButton, 2); //dispose();
         });
     }
     button = new Button(panel2, confirmButtonText, ENTYPO_ICON_CHECK);
     button->setCallback([&] { if (mCallback) mCallback(NULL, 1); dispose(); });
+#if 0
     red_debug_lite("mSetButton:%p parent=%p this=%p\n",
         mSetButton, mSetButton->parent(), this);
+#endif
     /* 居中 */
     center();
     requestFocus();

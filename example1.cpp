@@ -59,7 +59,16 @@ using std::endl;
 
 using namespace sdlgui;
 
+
 void do_with_green_light_normal(Widget *widget, int choose)
+{
+  std::cout << "green light normal:" << choose << std::endl;
+  if (choose != 2)
+  {
+    /* TODO change green light status */
+  }
+}
+void do_with_green_light_mocode(Widget *widget, int choose)
 {
   std::cout << "green light normal:" << choose << std::endl;
   if (choose != 2)
@@ -202,11 +211,12 @@ public:
           /* 定义了这个窗口的布局 */
           cwindow.setLayout(layout);
           cwindow.add<Label>("绿灯", "sans-bold");
-          cwindow.add<Button>("常亮", [&] {
-              msgdialog(MessageDialog::Type::Choose, "灯具控制", "确认要打开绿光么?",
-              do_with_green_light_normal); });
+          cwindow.add<Button>("关闭", [&] {
+              msgdialog(MessageDialog::Type::Question, "绿灯控制", "确认要打开绿光么?", "确认", "取消", do_with_green_light_normal); });
           cwindow.add<Button>("绿闪");
-          cwindow.add<Button>("莫码");
+          cwindow.add<Button>("莫码", [&] {
+              msgdialog(MessageDialog::Type::Choose, "莫码发送设置", "准备发送莫码?",
+              do_with_green_light_mocode); });
 
           cwindow.add<Label>("白灯", "sans-bold");
           cwindow.add<Button>("常亮");
