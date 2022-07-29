@@ -71,7 +71,7 @@ void do_with_green_light_normal(Widget *widget, int choose)
 #if 1
   Window * setWindow = new Window(widget->window()->parent(), "www参数配置");
   /* 标记为 modal winow, 该 window 会提前到最前面图层 */
-  setWindow->setModal(true);
+  //setWindow->setModal(true);
   setWindow->setLayout(new BoxLayout(Orientation::Vertical,
                           Alignment::Middle, 0, 15));
 

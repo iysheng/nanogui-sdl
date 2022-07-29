@@ -278,6 +278,7 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
     mModifiers = modifiers;
     mLastInteraction = SDL_GetTicks();
     try {
+        red_debug_lite("mFocusPath.size=%d", mFocusPath.size());
         if (mFocusPath.size() > 1) {
             /* 强制转换为 Window 类的指针
              * 这里为什么要减去 2 ？？？
@@ -285,11 +286,14 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
             const Window *window =
                 dynamic_cast<Window *>(mFocusPath[mFocusPath.size() - 2]);
             if (window && window->modal()) {
+            //if (window) {
                 /* 确认这个 window 是否包含这个触发点，如果不包含直接返回
                  * 如果包含 contains 函数返回 1
                  * */
                 if (!window->contains(mMousePos))
+                {
                     return false;
+                }
             }
         }
 
@@ -431,6 +435,7 @@ void Screen::updateFocus(Widget *widget) {
     mFocusPath.clear();
     Widget *window = nullptr;
     while (widget) {
+        red_debug_lite("push sth widget");
         /* 更新 focus 向量,插入新元素 */
         mFocusPath.push_back(widget);
         if (dynamic_cast<Window *>(widget))

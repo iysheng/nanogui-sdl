@@ -66,6 +66,7 @@ MessageDialog::MessageDialog(Widget *parent, Type type, const std::string &title
 
   : Window(parent, title)
 {
+    red_debug_lite("parent=%p msgdialog=%p", parent, this);
     setLayout(new BoxLayout(Orientation::Vertical,
                             Alignment::Middle, 10, 10));
     setModal(true);

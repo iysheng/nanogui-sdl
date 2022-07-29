@@ -85,12 +85,11 @@ Keyboard::Keyboard(Widget *parent, Window *parentWindow, KeyboardType type)
   {
     printf("This is number keyboard type\n");
     setLayout(new GridLayout(Orientation::Horizontal, 3, Alignment::Middle, 5, 5));
-    this->wdg<Button>("1").setWidgetCallback([](Widget *widget) {
+    wdg<Button>("1").setWidgetCallback([](Widget *widget) {
         Keyboard *keyboard = dynamic_cast<Keyboard*>(widget);
         keyboard->mKeyboardValue.push_back('1');
         keyboard->getTextBox()->setValue(keyboard->mKeyboardValue);
         keyboard->getTextBox()->focusEvent(true);
-        //((TextBox *)(((Keyboard *)widget)->getTextBox()))->focusEvent(true);
         });
     //red_debug_lite("child0 addr=%p size=%d,%d", mChildren[0],);
     this->wdg<Button>("2").setWidgetCallback([](Widget *widget) {
@@ -435,10 +434,12 @@ void Keyboard::draw(SDL_Renderer* renderer)
 
   /* 绘制 keyboard 的主体 */
   drawBody(renderer);
-  
-  red_debug_lite("child of keyboard:%d", this->mChildren.size())
+
+  //red_debug_lite("child of keyboard:%d", this->mChildren.size())
   /* 绘制 mChildren 控件 */
   Widget::draw(renderer);
+  setModal(true);
+  //red_debug_lite("draw modal");
 }
 
 /* 键盘控件的鼠标事件处理函数核心还是遍历 children 节点的 mouseButtonEvent 处理函数 */
