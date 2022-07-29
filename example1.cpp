@@ -70,6 +70,8 @@ void do_with_green_light_normal(Widget *widget, int choose)
   printf("button widget window parent=%p\n", widget->window()->parent());
 #if 1
   Window * setWindow = new Window(widget->window()->parent(), "www参数配置");
+  /* 标记为 modal winow, 该 window 会提前到最前面图层 */
+  setWindow->setModal(true);
   setWindow->setLayout(new BoxLayout(Orientation::Vertical,
                           Alignment::Middle, 0, 15));
 
@@ -102,13 +104,19 @@ void do_with_green_light_normal(Widget *widget, int choose)
   textBox2.setFontSize(16);
   //textBox2.setFormat("[1-9][0-9]*");
   textBox2.setAlignment(TextBox::Alignment::Left);
-  widget->parent()->parent()->setVisible(false);
+  //widget->parent()->parent()->setVisible(false);
 
   Widget *btWidget = setWindow->add<Widget>();
   btWidget->setLayout(new BoxLayout(Orientation::Horizontal,
                                   Alignment::Middle, 0, 15));
-  btWidget->add<Button>("返回", [&]{std::cout << "返回" << std::endl;});
-  btWidget->add<Button>("确认", [&]{std::cout << "确认" << std::endl;});
+  btWidget->add<Button>("返回")->setWidgetCallback([](Widget *widget){
+      widget->window()->dispose();
+      std::cout << "返回" << std::endl;
+  });
+  btWidget->add<Button>("确认")->setWidgetCallback([](Widget *widget){
+      widget->window()->dispose();
+      std::cout << "确认" << std::endl;
+  });
   red_debug_lite("window parent %p ww parent %p", widget->window()->parent(), widget->window()->parent());
 
   Screen * screen = dynamic_cast<Screen *>(widget->window()->parent());

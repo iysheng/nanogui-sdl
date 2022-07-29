@@ -25,3 +25,7 @@ performLayout
                 setPositon
                 setSize
                 performLayout 执行 child 的 performLayout
+
+-------------- onEvent
+screen->onEvent
+    mouseButtonCallbackEvent 鼠标和屏幕按键的回调函数
