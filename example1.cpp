@@ -79,8 +79,10 @@ void do_with_green_light_mocode(Widget *widget, int choose)
   printf("button widget window parent=%p\n", widget->window()->parent());
 #if 1
   Window * setWindow = new Window(widget->window()->parent(), "www参数配置");
+  Window * mocodeWindow = widget->window();
   /* 标记为 modal winow, 该 window 会提前到最前面图层 */
-  //setWindow->setModal(true);
+  mocodeWindow->setModal(false);
+  setWindow->setModal(true);
   setWindow->setLayout(new BoxLayout(Orientation::Vertical,
                           Alignment::Middle, 0, 15));
 
@@ -123,6 +125,9 @@ void do_with_green_light_mocode(Widget *widget, int choose)
       std::cout << "返回" << std::endl;
   });
   btWidget->add<Button>("确认")->setWidgetCallback([](Widget *widget){
+      Widget *wdg = widget->window()->parent()->gfind("莫码发送设置");
+      Window * wnd = dynamic_cast<Window *>(wdg);
+      wnd->window()->setModal(true);
       widget->window()->dispose();
       std::cout << "确认" << std::endl;
   });
@@ -200,6 +205,7 @@ public:
         /* 小部件网格 */
         {
           auto& cwindow = wdg<Window>("灯光功能");
+          red_debug_lite("cwindow addr=%p dynamic_cast<Widget *>=%p", &cwindow, dynamic_cast<Widget *>(&cwindow));
 
           /* 确定了 cwindow 的位置 */
           cwindow.withPosition({0, 670});
@@ -214,9 +220,13 @@ public:
           cwindow.add<Button>("关闭", [&] {
               msgdialog(MessageDialog::Type::Question, "绿灯控制", "确认要打开绿光么?", "确认", "取消", do_with_green_light_normal); });
           cwindow.add<Button>("绿闪");
-          cwindow.add<Button>("莫码", [&] {
+          /* 这里会弹出来新的 MessageDialog, 新的 MessageDialog 支持弹出新的 Window
+           * 测试发现这个 MessageDialog Widget 的 parent 竟然是 TestWindow * ？？？
+           * */
+          Button * mocodeBtb = cwindow.add<Button>("莫码", [&] {
               msgdialog(MessageDialog::Type::Choose, "莫码发送设置", "准备发送莫码?",
               do_with_green_light_mocode); });
+          red_debug_lite("this =%p mocodeBtb=%p dynamic_cast<Widget *>=%p", this, mocodeBtb, dynamic_cast<Widget *>(mocodeBtb));
 
           cwindow.add<Label>("白灯", "sans-bold");
           cwindow.add<Button>("常亮");

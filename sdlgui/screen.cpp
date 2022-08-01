@@ -58,6 +58,7 @@ bool Screen::onEvent(SDL_Event& event)
     {
       if (!mProcessEvents)
          return false;
+      /* 首先会更新鼠标的位置信息 */
       return cursorPosCallbackEvent(event.motion.x, event.motion.y);
     }
     break;
@@ -262,6 +263,7 @@ bool Screen::cursorPosCallbackEvent(double x, double y)
         if (!ret)
             ret = mouseMotionEvent(p, p - mMousePos, mMouseState, mModifiers);
 
+        /* 在这里更新了鼠标的位置信息么 */
         mMousePos = p;
 
         return ret;
@@ -290,8 +292,9 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
                 /* 确认这个 window 是否包含这个触发点，如果不包含直接返回
                  * 如果包含 contains 函数返回 1
                  * */
-                if (!window->contains(mMousePos))
+                if (!window->contains(mMousePos) && !window->childKeyboardTouched(mMousePos))
                 {
+                    red_debug("modal window=%p", window);
                     return false;
                 }
             }

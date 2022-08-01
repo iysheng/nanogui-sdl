@@ -209,6 +209,7 @@ void Widget::addChild(int index, Widget * widget)
 {
     assert(index <= childCount());
     mChildren.insert(mChildren.begin() + index, widget);
+    /* 增加这个 widget 的引用计数 */
     widget->incRef();
     widget->setParent(this);
     //red_debug_lite("this=%p", this);

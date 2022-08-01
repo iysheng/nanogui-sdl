@@ -173,6 +173,7 @@ public:
     int childIndex(Widget* widget) const;
 
     /// Variadic shorthand notation to construct and add a child widget
+    // 模板函数
     template<typename WidgetClass, typename... Args>
     WidgetClass* add(const Args&... args) {
         return new WidgetClass(this, args...);
@@ -226,6 +227,7 @@ public:
     /// Check if the widget contains a certain position
     bool contains(const Vector2i &p) const
     {
+    //  red_debug_lite("p(%d,%d) _pos(%d,%d)", p.x, p.y, _pos.x, _pos.y);
       Vector2i d = p - _pos;
       return d.positive() && d.lessOrEq({ mSize.x, mSize.y });
     }

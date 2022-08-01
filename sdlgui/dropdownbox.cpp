@@ -156,8 +156,10 @@ public:
     Screen *screen = (Screen *)widget;
     Vector2i screenSize = screen->size();
 
+    /* 这里会更新 _pos */
     _pos = mParentWindow->position() + mAnchorPos;
     _pos = Vector2i(_pos.x, std::min(_pos.y, screen->size().y - mSize.y));
+
   }
 
   void updateCaption(const std::string& caption)

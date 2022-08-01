@@ -13,6 +13,7 @@
 
 #include <sdlgui/widget.h>
 #include <memory>
+#include <vector>
 
 NAMESPACE_BEGIN(sdlgui)
 
@@ -78,6 +79,12 @@ public:
     /// Handle a focus change event (default implementation: record the focus status, but do nothing)
     bool focusEvent(bool focused);
 
+    bool childKeyboardTouched(const Vector2i &p) const;
+
+    void addChildKeyboard(Window *keyboard) {
+        mChildKeyboard.push_back(keyboard);
+    };
+
 protected:
     /// Internal helper function to maintain nested window position values; overridden in \ref Popup
     void refreshRelativePlacement();
@@ -85,6 +92,7 @@ protected:
 
     std::string mTitle;
     Widget *mButtonPanel;
+    std::vector<Window *> mChildKeyboard; /* 指向 Keyboard child 控件指针 */
 
     Texture _titleTex;
 

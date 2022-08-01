@@ -78,6 +78,7 @@ Button::Button(Widget *parent, const std::string &caption, int icon)
       mFlags(NormalButton) /* 初始就是 normal button */, mBackgroundColor(Color(0, 0)),
       mTextColor(Color(0, 0)) 
 {
+  red_debug_lite("%s parent=%p this=%p", caption.c_str(), parent, this);
   _captionTex.dirty = true;
   _iconTex.dirty = true;
 }

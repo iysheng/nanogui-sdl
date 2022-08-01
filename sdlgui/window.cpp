@@ -146,10 +146,11 @@ struct Window::AsyncTexture
 
 };
 
+/* Window 的基础构造函数 */
 Window::Window(Widget *parent, const std::string &title)
-    : Widget(parent), mTitle(title), mButtonPanel(nullptr), mModal(false), mDrag(false) 
+    : Widget(parent), mTitle(title), mButtonPanel(nullptr), mModal(false), mDrag(false)
 {
-  printf("Window parent=%p\n", parent);
+  red_debug_lite("%s:Window parent=%p\n", title, parent);
   _titleTex.dirty = true;
 }
 
@@ -347,4 +348,13 @@ void Window::refreshRelativePlacement()
     /* Overridden in \ref Popup */
 }
 
+bool Window::childKeyboardTouched(const Vector2i &p) const
+{
+  for (auto child : mChildKeyboard) 
+  {
+      if (child->visible() && child->contains(p))
+        return true;
+  }
+  return false;
+}
 NAMESPACE_END(sdlgui)

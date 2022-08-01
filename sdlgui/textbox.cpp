@@ -151,11 +151,20 @@ TextBox::TextBox(Widget *parent,const std::string &value, const std::string& uni
       mFontSize = mTheme->mTextBoxFontSize;
 
     Window *parentWindow = window();
-    /* parent 和 parent window 为什么是这两个呢？？？ */
+    /* parent 和 parent window 为什么是这两个呢？？？ 因为是沿用
+     * popup 控件的, 所直接用了两个，关键是这个 window() 本什么是否会用到,比如在 popup
+     * 控件中如何使用的，仔细看了下这个 mParent 主要是用来定位锚点的,即是为了定位的，
+     * 比如 keyboard 显示在哪个位置
+     * */
     mKeyboard = new Keyboard(parentWindow->parent(), window(), type);
     mKeyboard->setSize(Vector2i(320, 250));
     mKeyboard->setVisible(false);
     mKeyboard->setTextBox(this);
+
+    /* 关联这个 child widget
+     * */
+    red_debug_lite("parentwindow=%p mKeyboard=%p Window=%p", parentWindow, mKeyboard, dynamic_cast<Window *>(mKeyboard));
+    parentWindow->addChildKeyboard(dynamic_cast<Window *>(mKeyboard));
     _captionTex.dirty = true;
     _unitsTex.dirty = true;
 }

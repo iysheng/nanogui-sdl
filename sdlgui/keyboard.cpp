@@ -345,6 +345,7 @@ void Keyboard::refreshRelativePlacement()
 
     _pos = mParentWindow->position() + mAnchorPos - Vector2i(0, mAnchorHeight);
     _pos = Vector2i(_pos.x, std::min(_pos.y, screen->size().y - mSize.y));
+    red_debug_lite("keyboard pos=%d,%d", _pos.x, _pos.y);
 }
 
 void Keyboard::drawBodyTemp(SDL_Renderer* renderer)
