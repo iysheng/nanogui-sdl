@@ -288,13 +288,11 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
             const Window *window =
                 dynamic_cast<Window *>(mFocusPath[mFocusPath.size() - 2]);
             if (window && window->modal()) {
-            //if (window) {
                 /* 确认这个 window 是否包含这个触发点，如果不包含直接返回
                  * 如果包含 contains 函数返回 1
                  * */
                 if (!window->contains(mMousePos) && !window->childKeyboardTouched(mMousePos))
                 {
-                    red_debug("modal window=%p", window);
                     return false;
                 }
             }
@@ -458,6 +456,7 @@ void Screen::disposeWindow(Window *window) {
         mFocusPath.clear();
     if (mDragWidget == window)
         mDragWidget = nullptr;
+    window->childKeyboardHiden();
     removeChild(window);
 }
 

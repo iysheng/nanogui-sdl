@@ -80,6 +80,7 @@ public:
     bool focusEvent(bool focused);
 
     bool childKeyboardTouched(const Vector2i &p) const;
+    void childKeyboardHiden(void);
 
     void addChildKeyboard(Window *keyboard) {
         mChildKeyboard.push_back(keyboard);

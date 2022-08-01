@@ -150,7 +150,6 @@ struct Window::AsyncTexture
 Window::Window(Widget *parent, const std::string &title)
     : Widget(parent), mTitle(title), mButtonPanel(nullptr), mModal(false), mDrag(false)
 {
-  red_debug_lite("%s:Window parent=%p\n", title, parent);
   _titleTex.dirty = true;
 }
 
@@ -346,6 +345,15 @@ bool Window::scrollEvent(const Vector2i &p, const Vector2f &rel)
 void Window::refreshRelativePlacement() 
 {
     /* Overridden in \ref Popup */
+}
+
+void Window::childKeyboardHiden(void)
+{
+  for (auto child : mChildKeyboard) 
+  {
+      if (child->visible())
+        child->setVisible(false);
+  }
 }
 
 bool Window::childKeyboardTouched(const Vector2i &p) const
