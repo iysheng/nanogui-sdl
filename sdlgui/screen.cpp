@@ -477,7 +477,6 @@ void Screen::disposeWindow(Window *window) {
         mFocusPath.clear();
     if (mDragWidget == window)
         mDragWidget = nullptr;
-    window->childKeyboardHiden();
     removeChild(window);
 }
 

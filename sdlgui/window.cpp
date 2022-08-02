@@ -347,15 +347,6 @@ void Window::refreshRelativePlacement()
     /* Overridden in \ref Popup */
 }
 
-void Window::childKeyboardHiden(void)
-{
-  for (auto child : mChildKeyboard) 
-  {
-      if (child->visible())
-        child->setVisible(false);
-  }
-}
-
 bool Window::childKeyboardTouched(const Vector2i &p) const
 {
   for (auto child : mChildKeyboard) 
@@ -364,5 +355,17 @@ bool Window::childKeyboardTouched(const Vector2i &p) const
         return true;
   }
   return false;
+}
+
+Window::~Window()
+{
+    for (auto child : mChildKeyboard) 
+    {
+        if (child)
+        {
+          /* 析构 children keyboard window */
+            child->dispose();
+        }
+    }
 }
 NAMESPACE_END(sdlgui)

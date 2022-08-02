@@ -201,7 +201,7 @@ std::string file_dialog(const std::vector<std::pair<std::string, std::string>> &
 void Object::decRef(bool dealloc) const noexcept {
     --m_refCount;
     if (m_refCount == 0 && dealloc) {
-        delete this;
+        delete this; /* 显式删除这个对象 */
     } else if (m_refCount < 0) {
         fprintf(stderr, "Internal error: Object reference count < 0!\n");
         abort();

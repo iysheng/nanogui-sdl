@@ -33,6 +33,7 @@ Widget::Widget(Widget *parent)
         parent->addChild(this);
 }
 
+/* 析构函数 */
 Widget::~Widget() 
 {
     for (auto child : mChildren) 
@@ -223,6 +224,11 @@ void Widget::addChild(Widget * widget)
 
 void Widget::removeChild(const Widget *widget) 
 {
+  /* erase 才会真正的删除对象，remove 可以理解为排序所以不会改变大小
+   * std::remove 返回的是整理之后最后的 == widget 的对象指针
+   * eg: a b widget c d -> a b c d x(d) -> 指向的是 d 后的内容
+   * std::remove 返回的内容指向第二个 d
+   * */
     mChildren.erase(std::remove(mChildren.begin(), mChildren.end(), widget), mChildren.end());
     widget->decRef();
 }

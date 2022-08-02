@@ -80,7 +80,6 @@ public:
     bool focusEvent(bool focused);
 
     bool childKeyboardTouched(const Vector2i &p) const;
-    void childKeyboardHiden(void);
 
     void addChildKeyboard(Window *keyboard) {
         mChildKeyboard.push_back(keyboard);
@@ -89,6 +88,7 @@ public:
 protected:
     /// Internal helper function to maintain nested window position values; overridden in \ref Popup
     void refreshRelativePlacement();
+    virtual ~Window();
 protected:
 
     std::string mTitle;

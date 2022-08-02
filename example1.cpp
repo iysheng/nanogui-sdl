@@ -78,7 +78,7 @@ void do_with_green_light_mocode(Widget *widget, int choose)
   printf("button widget=%p parent=%p\n", widget, widget->parent());
   printf("button widget window parent=%p\n", widget->window()->parent());
 #if 1
-  Window * setWindow = new Window(widget->window()->parent(), "www参数配置");
+  Window * setWindow = new Window(widget->window()->parent(), "系统参数配置");
   Window * mocodeWindow = widget->window();
   /* 标记为 modal winow, 该 window 会提前到最前面图层 */
   mocodeWindow->setModal(false);
