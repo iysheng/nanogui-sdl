@@ -227,7 +227,6 @@ public:
     /// Check if the widget contains a certain position
     bool contains(const Vector2i &p) const
     {
-    //  red_debug_lite("p(%d,%d) _pos(%d,%d)", p.x, p.y, _pos.x, _pos.y);
       Vector2i d = p - _pos;
       return d.positive() && d.lessOrEq({ mSize.x, mSize.y });
     }

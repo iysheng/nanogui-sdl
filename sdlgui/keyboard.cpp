@@ -83,7 +83,6 @@ Keyboard::Keyboard(Widget *parent, Window *parentWindow, KeyboardType type)
 {
   if (type == KeyboardType::Number)
   {
-    printf("This is number keyboard type\n");
     setLayout(new GridLayout(Orientation::Horizontal, 3, Alignment::Middle, 5, 5));
     wdg<Button>("1").setWidgetCallback([](Widget *widget) {
         Keyboard *keyboard = dynamic_cast<Keyboard*>(widget);
@@ -91,7 +90,6 @@ Keyboard::Keyboard(Widget *parent, Window *parentWindow, KeyboardType type)
         keyboard->getTextBox()->setValue(keyboard->mKeyboardValue);
         keyboard->getTextBox()->focusEvent(true);
         });
-    //red_debug_lite("child0 addr=%p size=%d,%d", mChildren[0],);
     this->wdg<Button>("2").setWidgetCallback([](Widget *widget) {
         ((Keyboard *)widget)->mKeyboardValue.push_back('2');
         ((TextBox *)(((Keyboard *)widget)->getTextBox()))->setValue(((Keyboard *)widget)->mKeyboardValue);
@@ -149,7 +147,7 @@ Keyboard::Keyboard(Widget *parent, Window *parentWindow, KeyboardType type)
         });
     Button *button_ok = new Button(this, "↵");
     button_ok->setWidgetCallback([](Widget *widget) {
-                printf("num ok pushed:%s\n", ((Keyboard *)widget)->mKeyboardValue.c_str());
+                red_debug_lite("num ok pushed:%s\n", ((Keyboard *)widget)->mKeyboardValue.c_str());
                 ((Keyboard *)widget)->setVisible(false);
                 ((Keyboard *)widget)->parent()->requestFocus();
                 ((TextBox *)(((Keyboard *)widget)->getTextBox()))->setValue(((Keyboard *)widget)->mKeyboardValue);
@@ -159,7 +157,6 @@ Keyboard::Keyboard(Widget *parent, Window *parentWindow, KeyboardType type)
      * */
     button_ok->setFixedSize(Vector2i(29, 30));
     button_del->setFixedSize(Vector2i(29, 30));
-    printf("keyboard parent=%p parentWindow=%p\n", mParent, mParentWindow);
   }
   else if (type == KeyboardType::NumberIP)
   {
@@ -236,7 +233,7 @@ Keyboard::Keyboard(Widget *parent, Window *parentWindow, KeyboardType type)
         });
     Button *button_ok = new Button(this, "↵");
     button_ok->setWidgetCallback([](Widget *widget) {
-                printf("num ok pushed:%s\n", ((Keyboard *)widget)->mKeyboardValue.c_str());
+                red_debug_lite("num ok pushed:%s\n", ((Keyboard *)widget)->mKeyboardValue.c_str());
                 ((Keyboard *)widget)->setVisible(false);
                 ((Keyboard *)widget)->parent()->requestFocus();
                 ((TextBox *)(((Keyboard *)widget)->getTextBox()))->setValue(((Keyboard *)widget)->mKeyboardValue);
@@ -256,7 +253,6 @@ Keyboard::Keyboard(Widget *parent, Window *parentWindow, KeyboardType type)
       }
     mChildren[i*3]->setFixedSize(Vector2i(34 + 29*2, 30));
     layout->setAnchor(mChildren[i*3], AdvancedGridLayout::Anchor(0, i, 3, 1, Alignment::Middle));
-    printf("keyboard parent=%p parentWindow=%p\n", mParent, mParentWindow);
   }
 }
 
@@ -405,7 +401,6 @@ void Keyboard::drawBody(SDL_Renderer* renderer)
   else
 	  /* 第一次会走到这里 */
   {
-    printf("This is first time, just create keyboard\n");
     /* 创建一个指定 id 的 vector 对象 */
     AsyncTexturePtr newtx = std::make_shared<AsyncTexture>(id);
     /* 添加新创建的 AsyncTexturePtr 到向量尾部
@@ -435,11 +430,9 @@ void Keyboard::draw(SDL_Renderer* renderer)
   /* 绘制 keyboard 的主体 */
   drawBody(renderer);
 
-  //red_debug_lite("child of keyboard:%d", this->mChildren.size())
   /* 绘制 mChildren 控件 */
   Widget::draw(renderer);
   setModal(true);
-  //red_debug_lite("draw modal");
 }
 
 /* 键盘控件的鼠标事件处理函数核心还是遍历 children 节点的 mouseButtonEvent 处理函数 */

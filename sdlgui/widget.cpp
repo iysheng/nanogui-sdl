@@ -139,11 +139,9 @@ bool Widget::mouseButtonEvent(const Vector2i &p, int button, bool down, int modi
     
     if (button == SDL_BUTTON_LEFT && down && !mFocused)
 	{
-    	red_debug_lite("widget child request focus");
 		/* 更新 parent 窗口 focus 到当前 widget */
         requestFocus();
 	}
-	red_debug_lite("child done");
     return false;
 }
 
@@ -214,7 +212,6 @@ void Widget::addChild(int index, Widget * widget)
     /* 增加这个 widget 的引用计数 */
     widget->incRef();
     widget->setParent(this);
-    //red_debug_lite("this=%p", this);
 	/* 关联 theme */
     widget->setTheme(mTheme);
 }

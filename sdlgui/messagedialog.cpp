@@ -67,7 +67,6 @@ MessageDialog::MessageDialog(Widget *parent, Type type, const std::string &title
   : Window(parent, title)
 {
     this->setId(title);
-    red_debug_lite("title:%s parent=%p msgdialog=%p", title.c_str(), parent, this);
     setLayout(new BoxLayout(Orientation::Vertical,
                             Alignment::Middle, 10, 10));
     setModal(true);
@@ -101,7 +100,6 @@ MessageDialog::MessageDialog(Widget *parent, Type type, const std::string &title
     button = new Button(panel2, confirmButtonText, ENTYPO_ICON_CHECK);
     button->setCallback([&] { if (mCallback) mCallback(NULL, 1); dispose(); });
 #if 0
-    red_debug_lite("mSetButton:%p parent=%p this=%p\n",
         mSetButton, mSetButton->parent(), this);
 #endif
     /* 居中 */

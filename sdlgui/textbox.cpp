@@ -163,7 +163,6 @@ TextBox::TextBox(Widget *parent,const std::string &value, const std::string& uni
 
     /* 关联这个 child widget
      * */
-    red_debug_lite("parentwindow=%p mKeyboard=%p Window=%p", parentWindow, mKeyboard, dynamic_cast<Window *>(mKeyboard));
     parentWindow->addChildKeyboard(dynamic_cast<Window *>(mKeyboard));
     _captionTex.dirty = true;
     _unitsTex.dirty = true;
@@ -417,7 +416,6 @@ bool TextBox::mouseButtonEvent(const Vector2i &p, int button, bool down,
         if (!mSpinnable || spinArea(p) == SpinArea::None) /* not on scrolling arrows */
         {
             requestFocus();
-            red_debug_lite("textbox here");
         }
     }
 
@@ -523,10 +521,8 @@ bool TextBox::focusEvent(bool focused)
 
     if (mEditable) 
     {
-        red_debug_lite("test focus:%s", mValue.c_str());
         if (focused) 
         {
-          red_debug_lite("test focus:%s", mValue.c_str());
             mValueTemp = mValue;
             _tempTex.dirty = true;
             mCommitted = false;

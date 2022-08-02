@@ -131,14 +131,11 @@ void do_with_green_light_mocode(Widget *widget, int choose)
       widget->window()->dispose();
       std::cout << "确认" << std::endl;
   });
-  red_debug_lite("window parent %p ww parent %p", widget->window()->parent(), widget->window()->parent());
 
   Screen * screen = dynamic_cast<Screen *>(widget->window()->parent());
-  red_debug_lite("screen=%p", screen);
   SDL_Renderer * render = screen->sdlRenderer();
   screen->performLayout(render);
   setWindow->center();
-  red_debug_lite("setWindow size=%d,%d", setWindow->width(), setWindow->height());
   setWindow->requestFocus();
 #else
   MessageDialog *msg = dynamic_cast<MessageDialog *>(widget->parent()->parent());
@@ -205,7 +202,6 @@ public:
         /* 小部件网格 */
         {
           auto& cwindow = wdg<Window>("灯光功能");
-          red_debug_lite("cwindow addr=%p dynamic_cast<Widget *>=%p", &cwindow, dynamic_cast<Widget *>(&cwindow));
 
           /* 确定了 cwindow 的位置 */
           cwindow.withPosition({0, 670});
@@ -227,7 +223,6 @@ public:
           Button * mocodeBtb = cwindow.add<Button>("莫码", [&] {
               msgdialog(MessageDialog::Type::Choose, "莫码发送设置", "准备发送莫码?",
               do_with_green_light_mocode); });
-          red_debug_lite("this =%p mocodeBtb=%p dynamic_cast<Widget *>=%p", this, mocodeBtb, dynamic_cast<Widget *>(mocodeBtb));
 
           cwindow.add<Label>("白灯", "sans-bold");
           cwindow.add<Button>("常亮");

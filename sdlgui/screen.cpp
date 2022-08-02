@@ -108,7 +108,6 @@ void Screen::initialize(SDL_Window* window)
     SDL_GetWindowSize( window, &mSize[0], &mSize[1]);
     SDL_GetWindowSize( window, &mFBSize[0], &mFBSize[1]);
     mSDL_Renderer = SDL_GetRenderer(window);
-    red_debug_lite("render=%p screen=%p", mSDL_Renderer, this);
     
     if (mSDL_Renderer == nullptr)
         throw std::runtime_error("Could not initialize NanoVG!");
@@ -284,7 +283,6 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
     mModifiers = modifiers;
     mLastInteraction = SDL_GetTicks();
     try {
-        red_debug_lite("mFocusPath.size=%d", mFocusPath.size());
         if (mFocusPath.size() > 1) {
             /* 强制转换为 Window 类的指针
              * 这里为什么要减去 2 ？？？
@@ -314,10 +312,8 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
         auto dropWidget = findWidget(mMousePos);
         if (isModal && (!dropWidget->window()->modal() && !dynamic_cast<Keyboard *>(dropWidget)))
         {
-            red_debug_lite("invalid touch 000000000000000\n");
             return false;
         }
-        red_debug_lite("mDragActive =%d valid touch 11111111 ptr=%p dragptr=%p\n", mDragActive, dropWidget, mDragWidget);
         if (mDragActive && action == SDL_MOUSEBUTTONUP &&
             dropWidget != mDragWidget)
         {
@@ -325,7 +321,6 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
             mDragWidget->mouseButtonEvent(
                 mMousePos - mDragWidget->parent()->absolutePosition(), button,
                 false, mModifiers);
-            red_debug_lite("valid touch 222222 ptr=%p\n", dropWidget);
         }
 
         /*if (dropWidget != nullptr && dropWidget->cursor() != mCursor) {
@@ -334,7 +329,6 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
         }*/
 
         if (action == SDL_MOUSEBUTTONDOWN && button == SDL_BUTTON_LEFT) {
-            red_debug_lite("catch mouse left button(%d,%d)\n", mMousePos.x, mMousePos.y);
             /* 查找拖拽动作的窗口？？？ */
             mDragWidget = findWidget(mMousePos);
             /* 如果没有找到有效的 widget,即修正为 nullptr */
@@ -348,7 +342,6 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
             }
             else
             {
-                red_debug_lite("modal=%d mDragWidget=%p window title=%s", isModal, mDragWidget, mDragWidget->window()->title().c_str());
             }
 
             mDragActive = mDragWidget != nullptr;
@@ -356,7 +349,6 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
             {
                 /* 更新窗口状态 */
                 updateFocus(nullptr);
-                red_debug_lite("update window status");
             }
         } else {
             mDragActive = false;
@@ -462,7 +454,6 @@ void Screen::updateFocus(Widget *widget) {
     mFocusPath.clear();
     Widget *window = nullptr;
     while (widget) {
-        red_debug_lite("push sth widget");
         /* 更新 focus 向量,重新插入元素 */
         mFocusPath.push_back(widget);
         if (dynamic_cast<Window *>(widget))
@@ -476,7 +467,6 @@ void Screen::updateFocus(Widget *widget) {
     /* 如果这是一个 window,那么将这个 window 推向前 */
     if (window)
     {
-        red_debug_lite("window title:%s", dynamic_cast<Window *>(window)->title().c_str());
         /* 更新当前窗口向前 */
         moveWindowToFront((Window *) window);
     }
