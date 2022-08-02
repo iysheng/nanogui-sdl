@@ -415,7 +415,10 @@ bool TextBox::mouseButtonEvent(const Vector2i &p, int button, bool down,
     if (button == SDL_BUTTON_LEFT && down && !mFocused)
     {
         if (!mSpinnable || spinArea(p) == SpinArea::None) /* not on scrolling arrows */
+        {
             requestFocus();
+            red_debug_lite("textbox here");
+        }
     }
 
     if (mEditable && focused()) 
@@ -511,6 +514,7 @@ bool TextBox::mouseDragEvent(const Vector2i &p, const Vector2i &/* rel */,
     return false;
 }
 
+/* 为什么执行到这里了 */
 bool TextBox::focusEvent(bool focused) 
 {
     Widget::focusEvent(focused);
@@ -519,10 +523,10 @@ bool TextBox::focusEvent(bool focused)
 
     if (mEditable) 
     {
-          printf("test focus:%s\n", mValue.c_str());
+        red_debug_lite("test focus:%s", mValue.c_str());
         if (focused) 
         {
-          printf("test focus:%s\n", mValue.c_str());
+          red_debug_lite("test focus:%s", mValue.c_str());
             mValueTemp = mValue;
             _tempTex.dirty = true;
             mCommitted = false;

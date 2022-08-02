@@ -10,10 +10,13 @@
     BSD-style license that can be found in the LICENSE.txt file.
 */
 
+#include "window.h"
 #include <sdlgui/screen.h>
 #include <sdlgui/theme.h>
 #include <sdlgui/window.h>
 #include <sdlgui/popup.h>
+#include <sdlgui/textbox.h>
+#include <sdlgui/keyboard.h>
 #include <iostream>
 #include <map>
 
@@ -277,6 +280,7 @@ bool Screen::cursorPosCallbackEvent(double x, double y)
 
 /* 按键的回调函数 */
 bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
+    bool isModal = false;
     mModifiers = modifiers;
     mLastInteraction = SDL_GetTicks();
     try {
@@ -295,6 +299,8 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
                 {
                     return false;
                 }
+                /* 表示当前存在 Modal 窗口 */
+                isModal = true;
             }
         }
 
@@ -306,12 +312,21 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
 
         /* 查找触发的 widget */
         auto dropWidget = findWidget(mMousePos);
+        if (isModal && (!dropWidget->window()->modal() && !dynamic_cast<Keyboard *>(dropWidget)))
+        {
+            red_debug_lite("invalid touch 000000000000000\n");
+            return false;
+        }
+        red_debug_lite("mDragActive =%d valid touch 11111111 ptr=%p dragptr=%p\n", mDragActive, dropWidget, mDragWidget);
         if (mDragActive && action == SDL_MOUSEBUTTONUP &&
             dropWidget != mDragWidget)
+        {
             /* mouseButtonEvent 处理函数 */
             mDragWidget->mouseButtonEvent(
                 mMousePos - mDragWidget->parent()->absolutePosition(), button,
                 false, mModifiers);
+            red_debug_lite("valid touch 222222 ptr=%p\n", dropWidget);
+        }
 
         /*if (dropWidget != nullptr && dropWidget->cursor() != mCursor) {
             mCursor = dropWidget->cursor();
@@ -319,12 +334,21 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
         }*/
 
         if (action == SDL_MOUSEBUTTONDOWN && button == SDL_BUTTON_LEFT) {
-            printf("catch mouse left button(%d,%d)\n", mMousePos.x, mMousePos.y);
+            red_debug_lite("catch mouse left button(%d,%d)\n", mMousePos.x, mMousePos.y);
+            /* 查找拖拽动作的窗口？？？ */
             mDragWidget = findWidget(mMousePos);
             /* 如果没有找到有效的 widget,即修正为 nullptr */
             if (mDragWidget == this)
             {
                 mDragWidget = nullptr;
+            }
+            else if (isModal && !mDragWidget->window()->modal())
+            {
+                mDragWidget = nullptr;
+            }
+            else
+            {
+                red_debug_lite("modal=%d mDragWidget=%p window title=%s", isModal, mDragWidget, mDragWidget->window()->title().c_str());
             }
 
             mDragActive = mDragWidget != nullptr;
@@ -332,7 +356,7 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
             {
                 /* 更新窗口状态 */
                 updateFocus(nullptr);
-                printf("update window status\n");
+                red_debug_lite("update window status");
             }
         } else {
             mDragActive = false;
@@ -431,24 +455,31 @@ void Screen::updateFocus(Widget *widget) {
     for (auto w: mFocusPath) {
         if (!w->focused())
             continue;
+        /* 取消之前 focus 的 window */
         w->focusEvent(false);
     }
+    /* 清理了 mFocusPath */
     mFocusPath.clear();
     Widget *window = nullptr;
     while (widget) {
         red_debug_lite("push sth widget");
-        /* 更新 focus 向量,插入新元素 */
+        /* 更新 focus 向量,重新插入元素 */
         mFocusPath.push_back(widget);
         if (dynamic_cast<Window *>(widget))
             window = widget;
         widget = widget->parent();
     }
     for (auto it = mFocusPath.rbegin(); it != mFocusPath.rend(); ++it)
+        /* 标记 widget 的 mFocused 为 true */
         (*it)->focusEvent(true);
 
+    /* 如果这是一个 window,那么将这个 window 推向前 */
     if (window)
+    {
+        red_debug_lite("window title:%s", dynamic_cast<Window *>(window)->title().c_str());
         /* 更新当前窗口向前 */
         moveWindowToFront((Window *) window);
+    }
 }
 
 void Screen::disposeWindow(Window *window) {
@@ -474,6 +505,7 @@ void Screen::centerWindow(Window *window)
 void Screen::moveWindowToFront(Window *window) {
     /* 删除所有的 mChildren 节点 */
     mChildren.erase(std::remove(mChildren.begin(), mChildren.end(), window), mChildren.end());
+    /* 这里重新修改了 window 的队列么？？？ */
     mChildren.push_back(window);
     /* Brute force topological sort (no problem for a few windows..) */
     bool changed = false;

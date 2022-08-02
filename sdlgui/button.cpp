@@ -78,7 +78,7 @@ Button::Button(Widget *parent, const std::string &caption, int icon)
       mFlags(NormalButton) /* 初始就是 normal button */, mBackgroundColor(Color(0, 0)),
       mTextColor(Color(0, 0)) 
 {
-  red_debug_lite("%s parent=%p this=%p", caption.c_str(), parent, this);
+  red_debug_lite("%s ptr=%p", caption.c_str(), this);
   _captionTex.dirty = true;
   _iconTex.dirty = true;
 }
@@ -116,7 +116,7 @@ bool Button::mouseButtonEvent(const Vector2i &p, int button, bool down, int modi
     ref<Button> self = this;
 
 	/* 这个 mEnabled 什么时候赋值的呢 */
-    printf("mEnabled=%d\n", mEnabled);
+    red_debug_lite("mEnabled=%d\n", mEnabled);
     if (button ==  SDL_BUTTON_LEFT && mEnabled) 
     {
         bool pushedBackup = mPushed;
@@ -174,7 +174,7 @@ bool Button::mouseButtonEvent(const Vector2i &p, int button, bool down, int modi
             {
 				/* 一般按键,标记 mPushed 为真 */
                 mPushed = true;
-                printf("mPushed:%d\n", mPushed);
+                red_debug_lite("mPushed:%d\n", mPushed);
             }
         }
         /* 按键弹起后会走到这里 */
@@ -183,13 +183,13 @@ bool Button::mouseButtonEvent(const Vector2i &p, int button, bool down, int modi
             if (contains(p) && mCallback)
 			{
                 mCallback();
-				printf("get here?");
+				red_debug_lite("get here?");
 			}
             /* 一般地这个函数，会用在 keyboard 面板上 */
             if (contains(p) && mWidgetCallback)
 			{
                 mWidgetCallback(parent());
-				printf("get here for widget callback?");
+				red_debug_lite("get here for widget callback?");
 			}
             if (mFlags & NormalButton)
             {
@@ -208,7 +208,7 @@ bool Button::mouseButtonEvent(const Vector2i &p, int button, bool down, int modi
         return true;
     }
 
-    printf("oh no\n");
+    red_debug_lite("oh no\n");
     return false;
 }
 

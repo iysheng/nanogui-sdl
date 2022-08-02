@@ -118,6 +118,7 @@ Widget *Widget::findWidget(const Vector2i &p)
     {
         Widget *child = *it;
         if (child->visible() && child->contains(p - _pos))
+            /* 递归查询 */
             return child->findWidget(p - _pos);
     }
     return contains(p) ? this : nullptr;
@@ -131,18 +132,18 @@ bool Widget::mouseButtonEvent(const Vector2i &p, int button, bool down, int modi
     {
         Widget *child = *it;
         if (child->visible() && child->contains(p - _pos) &&
-            /* 回调 child 的 mouseButtonEvent 函数 */
+            /* 回调 child 的 mouseButtonEvent 函数,递归 */
             child->mouseButtonEvent(p - _pos, button, down, modifiers))
             return true;
     }
     
     if (button == SDL_BUTTON_LEFT && down && !mFocused)
 	{
+    	red_debug_lite("widget child request focus");
 		/* 更新 parent 窗口 focus 到当前 widget */
         requestFocus();
-    	printf("widget child request focus\n");
 	}
-	printf("child done\n");
+	red_debug_lite("child done");
     return false;
 }
 
@@ -151,6 +152,7 @@ bool Widget::mouseMotionEvent(const Vector2i &p, const Vector2i &rel, int button
     for (auto it = mChildren.rbegin(); it != mChildren.rend(); ++it) 
     {
         Widget *child = *it;
+        /* 如果不可见就直接退出 */
         if (!child->visible())
             continue;
         bool contained = child->contains(p - _pos);

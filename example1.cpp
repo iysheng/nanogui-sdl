@@ -127,7 +127,7 @@ void do_with_green_light_mocode(Widget *widget, int choose)
   btWidget->add<Button>("确认")->setWidgetCallback([](Widget *widget){
       Widget *wdg = widget->window()->parent()->gfind("莫码发送设置");
       Window * wnd = dynamic_cast<Window *>(wdg);
-      wnd->window()->setModal(true);
+      wnd->setModal(true);
       widget->window()->dispose();
       std::cout << "确认" << std::endl;
   });
@@ -223,6 +223,7 @@ public:
           /* 这里会弹出来新的 MessageDialog, 新的 MessageDialog 支持弹出新的 Window
            * 测试发现这个 MessageDialog Widget 的 parent 竟然是 TestWindow * ？？？
            * */
+
           Button * mocodeBtb = cwindow.add<Button>("莫码", [&] {
               msgdialog(MessageDialog::Type::Choose, "莫码发送设置", "准备发送莫码?",
               do_with_green_light_mocode); });

@@ -445,7 +445,6 @@ void Keyboard::draw(SDL_Renderer* renderer)
 /* 键盘控件的鼠标事件处理函数核心还是遍历 children 节点的 mouseButtonEvent 处理函数 */
 bool Keyboard::mouseButtonEvent(const Vector2i &p, int button, bool down, int modifiers)
 {
-    printf("catch keyboard (%d,%d)\n", (p - _pos).x, (p - _pos).y);
     for (auto it = mChildren.rbegin(); it != mChildren.rend(); ++it) 
     {
         Widget *child = *it;
