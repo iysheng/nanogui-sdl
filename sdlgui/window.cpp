@@ -222,18 +222,20 @@ void Window::drawBodyTemp(SDL_Renderer* renderer)
   SDL_RenderFillRect(renderer, &shadowRect);
 
   /* Draw window */
+  /* 填充窗口 */
   SDL_Color color = (mMouseFocus ? mTheme->mWindowFillFocused : mTheme->mWindowFillUnfocused).toSdlColor();
   SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
   SDL_RenderFillRect(renderer, &rect);
 
+  /* 绘制边框 */
   SDL_Rect wndBdRect{ ap.x - 2, ap.y - 2, width() + 4, height() + 4 };
   SDL_Color bd = mTheme->mBorderDark.toSdlColor();
   SDL_SetRenderDrawColor(renderer, bd.r, bd.g, bd.b, bd.a);
   SDL_RenderDrawRect(renderer, &wndBdRect);
 
+  /* 绘标题栏 */
   SDL_Color headerColor = mTheme->mWindowHeaderGradientTop.toSdlColor();
   SDL_Rect headerRect{ ap.x, ap.y, mSize.x, hh };
-
   SDL_SetRenderDrawColor(renderer, headerColor.r, headerColor.g, headerColor.b, headerColor.a);
   SDL_RenderFillRect(renderer, &headerRect);
 
