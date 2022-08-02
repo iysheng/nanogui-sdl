@@ -453,13 +453,11 @@ bool Keyboard::mouseButtonEvent(const Vector2i &p, int button, bool down, int mo
             /* 回调 child 的 mouseButtonEvent 函数 */
             child->mouseButtonEvent(p - _pos, button, down, modifiers))
         {
-            printf("get here now with keyboard\n");
             return true;
         }
     }
 
-    printf("get here right\n");
-    return false;
+    return true;
 }
 
 NAMESPACE_END(sdlgui)
