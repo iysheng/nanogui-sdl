@@ -233,6 +233,7 @@ just_draw:
         }
     }
 exit:
+    /* 标记状态为未初始化 */
     p_video_obj->mStatus = R_VIDEO_UNINITLED;
     if (p_frame)
     {
