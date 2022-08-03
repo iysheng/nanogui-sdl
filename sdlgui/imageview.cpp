@@ -255,6 +255,7 @@ void ImageView::performLayout(SDL_Renderer* ctx) {
     center();
 }
 
+/* 图像绘制函数 */
 void ImageView::draw(SDL_Renderer* renderer) 
 {
     Widget::draw(renderer);
@@ -307,6 +308,7 @@ void ImageView::draw(SDL_Renderer* renderer)
           imgrect.h
      };
 
+      /* 绘制 image 信息 */
       SDL_RenderCopy(renderer, mTexture, &imgrect, &rect);
     }
 

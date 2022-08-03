@@ -232,24 +232,24 @@ public:
 
         /* 小部件网格 */
         {
-          auto& window = wdg<Window>("测试 window");
+          auto& miscwindow = wdg<Window>("测试 window");
 
           /* 确定了 window 的位置 */
-          window.withPosition({100, 100});
+          miscwindow.withPosition({100, 100});
           /* 创建一个新的布局 */
           auto* layout = new GridLayout(Orientation::Horizontal, 2,
                                          Alignment::Middle, 15, 5);
           layout->setColAlignment({ Alignment::Maximum, Alignment::Fill });
           layout->setSpacing(0, 10);
           /* 定义了这个窗口的布局 */
-          window.setLayout(layout);
+          miscwindow.setLayout(layout);
 
           /* 调用 add 函数模板
-           * 将新创建的 label 控件关联到 window 作为其 parent
+           * 将新创建的 label 控件关联到 miscwindow 作为其 parent
            * */
-          window.add<Label>("浮点数测试 :", "sans-bold");
+          miscwindow.add<Label>("浮点数测试 :", "sans-bold");
           /* 创建 textBox */
-          auto& textBox = window.wdg<TextBox>();
+          auto& textBox = miscwindow.wdg<TextBox>();
           printf("textbox addr=%p\n", &textBox);
           textBox.setEditable(true);
           /* 设置控件大小 */
@@ -262,8 +262,8 @@ public:
           textBox.setFormat("[-]?[0-9]*\\.?[0-9]+");
           textBox.setAlignment(TextBox::Alignment::Left);
 
-          window.add<Label>("设备IP :", "sans-bold");
-          auto& textBox2 = window.wdg<TextBox>("", "", KeyboardType::NumberIP);
+          miscwindow.add<Label>("设备IP :", "sans-bold");
+          auto& textBox2 = miscwindow.wdg<TextBox>("", "", KeyboardType::NumberIP);
           textBox2.setEditable(true);
           textBox2.setFixedSize(Vector2i(150, 20));
           textBox2.setValue("192.168.255.1");
@@ -277,21 +277,21 @@ public:
           //textBox2.keyboard().setFixedSize(Vector2i(50, 50));
                       //.withLayout<GroupLayout>();
 
-          window.add<Label>( "Checkbox :", "sans-bold");
+          miscwindow.add<Label>( "Checkbox :", "sans-bold");
 
-          window.wdg<CheckBox>("Check me")
+          miscwindow.wdg<CheckBox>("Check me")
                 .withChecked(true)
                 .withFontSize(16);
 
-          window.add<Label>("Combo box :", "sans-bold");
-          window.wdg<ComboBox>()
+          miscwindow.add<Label>("Combo box :", "sans-bold");
+          miscwindow.wdg<ComboBox>()
                 .withItems(std::vector<std::string>{ "Item 1", "Item 2", "Item 3" })
                 .withFontSize(16)
                 .withFixedSize(Vector2i(100,20));
 
-          window.add<Label>("颜色按键 :", "sans-bold");
+          miscwindow.add<Label>("颜色按键 :", "sans-bold");
           /* 创建一个 popup button 按键 */
-          auto& popupBtn = window.wdg<PopupButton>("", 0);
+          auto& popupBtn = miscwindow.wdg<PopupButton>("", 0);
           popupBtn.setBackgroundColor(Color(255, 120, 0, 255));
           popupBtn.setFontSize(16);
           popupBtn.setFixedSize(Vector2i(100, 20));
@@ -320,6 +320,69 @@ public:
                   popupBtn.setPushed(false);
               }
           });
+
+
+          /* 加载图形到 images 这个 list */
+          ListImages images = loadImageDirectory(SDL_GetRenderer(pwindow), "icons");
+          /* 创建一个 popupbutton 控件,这个 widget 的 parent 是 miscwindow */
+          auto& imagePanelBtn = miscwindow.popupbutton("Image Panel", ENTYPO_ICON_FOLDER);
+
+          // Load all of the images by creating a GLTexture object and saving the pixel data.
+          mCurrentImage = 0;
+          /* 根据 icon.tex 构造一个新的 SDL_Texture* 对象并放置在 mImagesData 的尾部 */
+          for (auto& icon : images) mImagesData.emplace_back(icon.tex);
+
+          /* 创建一个新的 window 对象用来显示图片 */
+          auto& img_window = window("Selected image", Vector2i(675, 15));
+          img_window.withLayout<GroupLayout>();
+
+          /* 在这个 window 上创建一个 img_window 控件 */
+          auto imageView = img_window.add<ImageView>(mImagesData[0]);
+
+          /* 设置这个 pop button 关联的 pop window 的大小 */
+          imagePanelBtn.popup(Vector2i(245, 150))
+                         .vscrollpanel() /* 这个是什么控件 */
+                           .imgpanel(images)
+                             .setCallback([this, imageView](int i) /* lambda 表达式，this 和 imageview 使用值传递 */
+                             {
+                               if (i >= mImagesData.size())
+                                 return;
+                               imageView->bindImage(mImagesData[i]);
+                               mCurrentImage = i;
+                               cout << "Selected item " << i << '\n';
+                             });
+
+
+          // Change the active textures.
+
+          imageView->setGridThreshold(20);
+          imageView->setPixelInfoThreshold(20);
+          imageView->setPixelInfoCallback(
+              [this, imageView](const Vector2i& index) -> std::pair<std::string, Color>
+              {
+                void *pixels;
+                int pitch, w, h;
+                SDL_QueryTexture(mImagesData[mCurrentImage], nullptr, nullptr, &w, &h);
+
+                SDL_LockTexture(mImagesData[mCurrentImage], nullptr, &pixels, &pitch);
+                Uint32 *imageData = (Uint32*)pixels;
+
+                std::string stringData;
+                uint16_t channelSum = 0;
+                for (int i = 0; i != 4; ++i)
+                {
+                    uint8_t *data = (uint8_t*)imageData;
+                    auto& channelData = data[4*index.y*w + 4*index.x + i];
+                    channelSum += channelData;
+                    stringData += (std::to_string(static_cast<int>(channelData)) + "\n");
+                }
+                float intensity = static_cast<float>(255 - (channelSum / 4)) / 255.0f;
+                float colorScale = intensity > 0.5f ? (intensity + 1) / 2 : intensity / 2;
+                Color textColor = Color(colorScale, 1.0f);
+                SDL_UnlockTexture(mImagesData[mCurrentImage]);
+                return { stringData, textColor };
+              }
+          );
         }
         /* 确定每一个部件的大小 */
         performLayout(mSDL_Renderer);

@@ -133,6 +133,7 @@ void ImagePanel::draw(SDL_Renderer* renderer)
           imgSrcRect.h = (imgPaintRect.h / (float)ih) * imgh;
         }
 
+        /* 绘制图像内容 */
         SDL_RenderCopy(renderer, mImages[i].tex, &imgSrcRect, &imgPaintRect);
 
         SDL_Rect brect{ p.x + 1, p.y + 1, mThumbSize - 2, mThumbSize - 2};

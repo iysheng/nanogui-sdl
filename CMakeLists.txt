@@ -62,10 +62,12 @@ endif()
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
+find_package(FFmpeg REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(SDL2IMAGE REQUIRED)
 find_package(SDL2TTF REQUIRED)
 
+include_directories(${FFmpeg_INCLUDE_DIR})
 include_directories(${SDL2_INCLUDE_DIR})
 include_directories(${SDL2TTF_INCLUDE_DIR})
 include_directories(${SDL2_IMAGE_INCLUDE_DIR})
@@ -106,6 +108,7 @@ list(APPEND NNGUI_BASIC_SOURCE
      sdlgui/messagedialog.h
      sdlgui/popup.h
      sdlgui/keyboard.h
+     sdlgui/videoview.h
      sdlgui/popupbutton.h
      sdlgui/progressbar.h
      sdlgui/screen.h
@@ -139,6 +142,7 @@ list(APPEND NNGUI_BASIC_SOURCE
      sdlgui/resources.cpp
      sdlgui/popup.cpp
      sdlgui/keyboard.cpp
+     sdlgui/videoview.cpp
      sdlgui/popupbutton.cpp
      sdlgui/progressbar.cpp
      sdlgui/screen.cpp
@@ -163,7 +167,7 @@ if (NANOGUI_BUILD_EXAMPLE)
   set_target_properties(
       example1 PROPERTIES
       VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/debug")
-  target_link_libraries(example1 ${NNGUI_EXTRA_LIBS} ${SDL2_LIBRARY} ${SDL2IMAGE_LIBRARY} ${SDL2TTF_LIBRARY})
+    target_link_libraries(example1 ${NNGUI_EXTRA_LIBS} ${FFmpeg_LIBRARY} ${SDL2_LIBRARY} ${SDL2IMAGE_LIBRARY} ${SDL2TTF_LIBRARY})
 
   # Copy icons for example application
   if (WIN32) 
