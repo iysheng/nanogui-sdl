@@ -254,6 +254,7 @@ exit:
 
     return 0;
 }
+
 VideoView::VideoView(Widget* parent, SDL_Texture* texture)
     : Widget(parent), mTexture(texture), mScale(1.0f), mOffset(Vector2f::Zero()),
     mFixedScale(false), mFixedOffset(false), mPixelInfoCallback(nullptr), m_thread(nullptr),
@@ -496,52 +497,65 @@ void VideoView::draw(SDL_Renderer* renderer)
     Vector2f positionAfterOffset = positionInScreen + mOffset;
     Vector2f imagePosition = positionAfterOffset.cquotient(screenSize);
 
-    if (mStatus != R_VIDEO_INITLED)
+    if (mStatus == R_VIDEO_INITLED)
+    {
+        if (mTexture)
+        {
+          Vector2i borderPosition = Vector2i{ ap.x, ap.y } + mOffset.toint();
+          Vector2i borderSize = scaledImageSizeF().toint();
+    
+          SDL_Rect br{ borderPosition.x + 1, borderPosition.y + 1,  borderSize.x - 2, borderSize.y - 2 };
+    
+          PntRect r = srect2pntrect(br);
+          PntRect wr = { ap.x, ap.y, ap.x + width(), ap.y + height() };
+    
+          if (r.x1 <= wr.x1) r.x1 = wr.x1;
+          if (r.x2 >= wr.x2) r.x2 = wr.x2;
+          if (r.y1 <= wr.y1) r.y1 = wr.y1;
+          if (r.y2 >= wr.y2) r.y2 = wr.y2;
+    
+          int ix = 0, iy = 0;
+          int iw = r.x2 - r.x1;
+          int ih = r.y2 - r.y1;
+          if (positionAfterOffset.x <= ap.x)
+          {
+            ix = ap.x - positionAfterOffset.x;
+            iw = mImageSize.x- ix;
+            positionAfterOffset.x = absolutePosition().x;
+          }
+          if (positionAfterOffset.y <= ap.y)
+          {
+            iy = ap.y - positionAfterOffset.y;
+            ih = mImageSize.y - iy;
+            positionAfterOffset.y = absolutePosition().y;
+          }
+          SDL_Rect imgrect{ix, iy, iw, ih};
+          SDL_Rect rect{ 
+              (int)std::round(positionAfterOffset.x), 
+              (int)std::round(positionAfterOffset.y), 
+           this->window()->size().x, 
+           this->window()->size().y, 
+         };
+          //red_debug_lite("%d %d %d %d", rect.x, rect.y, rect.w, rect.h);
+          /* 绘制一帧的数据信息 */
+          SDL_UpdateTexture(mTexture, NULL, m_pixels[0], m_pitch[0]);
+          SDL_RenderCopy(renderer, mTexture, NULL, &rect);
+          return;
+        }
+    }
+    else if (mStatus == R_VIDEO_UNINITLED)
+    {
+        if (m_thread)
+        {
+            red_debug_lite("wait previous thread done");
+            SDL_WaitThread(m_thread, NULL);
+            red_debug_lite("new thread start");
+        }
+        m_thread = SDL_CreateThread(VideoView::video_draw_handler, mSrcUrl, this);
+    }
+    else
     {
         return;
-    }
-    if (mTexture)
-    {
-      Vector2i borderPosition = Vector2i{ ap.x, ap.y } + mOffset.toint();
-      Vector2i borderSize = scaledImageSizeF().toint();
-
-      SDL_Rect br{ borderPosition.x + 1, borderPosition.y + 1,  borderSize.x - 2, borderSize.y - 2 };
-
-      PntRect r = srect2pntrect(br);
-      PntRect wr = { ap.x, ap.y, ap.x + width(), ap.y + height() };
-
-      if (r.x1 <= wr.x1) r.x1 = wr.x1;
-      if (r.x2 >= wr.x2) r.x2 = wr.x2;
-      if (r.y1 <= wr.y1) r.y1 = wr.y1;
-      if (r.y2 >= wr.y2) r.y2 = wr.y2;
-
-      int ix = 0, iy = 0;
-      int iw = r.x2 - r.x1;
-      int ih = r.y2 - r.y1;
-      if (positionAfterOffset.x <= ap.x)
-      {
-        ix = ap.x - positionAfterOffset.x;
-        iw = mImageSize.x- ix;
-        positionAfterOffset.x = absolutePosition().x;
-      }
-      if (positionAfterOffset.y <= ap.y)
-      {
-        iy = ap.y - positionAfterOffset.y;
-        ih = mImageSize.y - iy;
-        positionAfterOffset.y = absolutePosition().y;
-      }
-      SDL_Rect imgrect{ix, iy, iw, ih};
-      SDL_Rect rect{ 
-          (int)std::round(positionAfterOffset.x), 
-          (int)std::round(positionAfterOffset.y), 
-       this->window()->size().x, 
-       this->window()->size().y, 
-     };
-      //red_debug_lite("%d %d %d %d", rect.x, rect.y, rect.w, rect.h);
-      /* 绘制一帧的数据信息 */
-      SDL_UpdateTexture(mTexture, NULL, m_pixels[0], m_pitch[0]);
-      SDL_RenderCopy(renderer, mTexture, NULL, &rect);
-      return;
     }
 
     drawWidgetBorder(renderer, ap);
