@@ -334,61 +334,13 @@ public:
           for (auto& icon : images) mImagesData.emplace_back(icon.tex);
 
           /* 创建一个新的 window 对象用来显示图片 */
-          auto& img_window = window("Selected image", Vector2i(675, 15));
-          //img_window.withLayout<GroupLayout>();
+          auto& img_window = window("摄像头一视频", Vector2i(675, 15));
+          /* 设置各个方向的 margin 为 0 */
+          img_window.setLayout(new GroupLayout(0,0,0,0));
           img_window.setSize(Vector2i(400, 300));
 
           /* 在这个 window 上创建一个 img_window 控件 */
-#if 1
           auto videoview = img_window.add<VideoView>(nullptr);
-#else
-          auto imageView = img_window.add<ImageView>(mImagesData[0]);
-
-          /* 设置这个 pop button 关联的 pop window 的大小 */
-          imagePanelBtn.popup(Vector2i(245, 150))
-                         .vscrollpanel() /* 这个是什么控件 */
-                           .imgpanel(images)
-                             .setCallback([this, imageView](int i) /* lambda 表达式，this 和 imageview 使用值传递 */
-                             {
-                               if (i >= mImagesData.size())
-                                 return;
-                               imageView->bindImage(mImagesData[i]);
-                               mCurrentImage = i;
-                               cout << "Selected item " << i << '\n';
-                             });
-
-
-          // Change the active textures.
-
-          imageView->setGridThreshold(20);
-          imageView->setPixelInfoThreshold(20);
-          imageView->setPixelInfoCallback(
-              [this, imageView](const Vector2i& index) -> std::pair<std::string, Color>
-              {
-                void *pixels;
-                int pitch, w, h;
-                SDL_QueryTexture(mImagesData[mCurrentImage], nullptr, nullptr, &w, &h);
-
-                SDL_LockTexture(mImagesData[mCurrentImage], nullptr, &pixels, &pitch);
-                Uint32 *imageData = (Uint32*)pixels;
-
-                std::string stringData;
-                uint16_t channelSum = 0;
-                for (int i = 0; i != 4; ++i)
-                {
-                    uint8_t *data = (uint8_t*)imageData;
-                    auto& channelData = data[4*index.y*w + 4*index.x + i];
-                    channelSum += channelData;
-                    stringData += (std::to_string(static_cast<int>(channelData)) + "\n");
-                }
-                float intensity = static_cast<float>(255 - (channelSum / 4)) / 255.0f;
-                float colorScale = intensity > 0.5f ? (intensity + 1) / 2 : intensity / 2;
-                Color textColor = Color(colorScale, 1.0f);
-                SDL_UnlockTexture(mImagesData[mCurrentImage]);
-                return { stringData, textColor };
-              }
-          );
-#endif
         }
         /* 确定每一个部件的大小 */
         performLayout(mSDL_Renderer);

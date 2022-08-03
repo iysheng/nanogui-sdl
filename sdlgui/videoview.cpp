@@ -175,8 +175,8 @@ re_open:
         p_avcodec_context->width,
         p_avcodec_context->height,
         p_avcodec_context->pix_fmt,
-        p_video_obj->window()->size().x,
-        p_video_obj->window()->size().y,
+        p_video_obj->imageSize().x,
+        p_video_obj->imageSize().y,
         dst_fix_fmt,
         SWS_BILINEAR,
         NULL,
@@ -184,7 +184,7 @@ re_open:
         NULL);
 
 
-    sdl_rect = p_video_obj->window()->size();
+    sdl_rect = p_video_obj->imageSize();
     red_debug_lite("w=%d h=%d", sdl_rect.x, sdl_rect.y);
 
     value = av_image_alloc(p_video_obj->m_pixels, p_video_obj->m_pitch, sdl_rect.x, sdl_rect.y, dst_fix_fmt, 1);
@@ -262,16 +262,17 @@ VideoView::VideoView(Widget* parent, SDL_Texture* texture)
     mSrcUrl("rtsp://admin:jariled123@192.168.100.64")
 {
     Window * wnd = parent->window();
+    int hh = wnd->theme()->mWindowHeaderHeight;
     Screen* screen = dynamic_cast<Screen*>(wnd->parent());
     assert(screen);
-    updateImageParameters();
     /* TODO create a thread to get image data */
     if (!mTexture)
     {
         /* 默认创建一个 window size - 20 大小的窗口 */
-        mTexture = SDL_CreateTexture(screen->sdlRenderer(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, wnd->size().x - 0, wnd->size().y - 0);
-        red_debug_lite("w=%d h=%d", wnd->size().x, wnd->size().y);
+        mTexture = SDL_CreateTexture(screen->sdlRenderer(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, wnd->size().x, wnd->size().y - hh);
+        red_debug_lite("w=%d h=%d", wnd->size().x - 10, wnd->size().y - hh);
     }
+    updateImageParameters();
 
     if (m_thread)
     {
@@ -494,15 +495,20 @@ void VideoView::draw(SDL_Renderer* renderer)
     assert(screen);
     Vector2f screenSize = screen->size().tofloat();
     Vector2f scaleFactor = imageSizeF().cquotient(screenSize) * mScale;
+    /* 转换为浮点数 */
     Vector2f positionInScreen = absolutePosition().tofloat();
     Vector2f positionAfterOffset = positionInScreen + mOffset;
+    /* 计算系数 */
     Vector2f imagePosition = positionAfterOffset.cquotient(screenSize);
 
+    /* 测试打印为 0 */
+    //red_debug_lite("mOffset(%f,%f)", mOffset.x, mOffset.y);
     if (mStatus == R_VIDEO_INITLED)
     {
         if (mTexture)
         {
           Vector2i borderPosition = Vector2i{ ap.x, ap.y } + mOffset.toint();
+          /* 图像大小 */
           Vector2i borderSize = scaledImageSizeF().toint();
     
           SDL_Rect br{ borderPosition.x + 1, borderPosition.y + 1,  borderSize.x - 2, borderSize.y - 2 };
@@ -531,11 +537,11 @@ void VideoView::draw(SDL_Renderer* renderer)
             positionAfterOffset.y = absolutePosition().y;
           }
           SDL_Rect imgrect{ix, iy, iw, ih};
-          SDL_Rect rect{ 
+          SDL_Rect rect{
               (int)std::round(positionAfterOffset.x), 
               (int)std::round(positionAfterOffset.y), 
-           this->window()->size().x, 
-           this->window()->size().y, 
+           mImageSize.x, 
+           mImageSize.y, 
          };
           //red_debug_lite("%d %d %d %d", rect.x, rect.y, rect.w, rect.h);
           /* 绘制一帧的数据信息 */
