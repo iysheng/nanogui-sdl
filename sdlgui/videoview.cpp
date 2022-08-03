@@ -356,12 +356,7 @@ void VideoView::zoom(int amount, const Vector2f& focusPosition)
 
 bool VideoView::mouseDragEvent(const Vector2i& p, const Vector2i& rel, int button, int /*modifiers*/)
 {
-    if ((button & (1 << SDL_BUTTON_LEFT)) != 0 && !mFixedOffset) 
-    {
-        setImageCoordinateAt((p + rel).tofloat(), imageCoordinateAt(p.cast<float>()));
-        return true;
-    }
-    return false;
+    return true;
 }
 
 bool VideoView::gridVisible() const 
@@ -381,97 +376,16 @@ bool VideoView::helpersVisible() const
 
 bool VideoView::scrollEvent(const Vector2i& p, const Vector2f& rel)
 {
-  if (mFixedScale)
-    return false;
-  float v = rel.y;
-  if (std::abs(v) < 1)
-    v = std::copysign(1.f, v);
-  zoom(v, (p -position()).tofloat());
     return true;
 }
 
 bool VideoView::keyboardEvent(int key, int /*scancode*/, int action, int modifiers) 
 {
-    if (action) {
-        switch (key) {
-        case SDLK_LEFT:
-            if (!mFixedOffset) {
-                if (SDLK_LCTRL & modifiers)
-                    moveOffset(Vector2f(30, 0));
-                else
-                    moveOffset(Vector2f(10, 0));
-                return true;
-            }
-            break;
-        case SDLK_RIGHT:
-            if (!mFixedOffset) {
-                if (SDLK_LCTRL & modifiers)
-                    moveOffset(Vector2f(-30, 0));
-                else
-                    moveOffset(Vector2f(-10, 0));
-                return true;
-            }
-            break;
-        case SDLK_DOWN:
-            if (!mFixedOffset) {
-                if (SDLK_LCTRL & modifiers)
-                    moveOffset(Vector2f(0, -30));
-                else
-                    moveOffset(Vector2f(0, -10));
-                return true;
-            }
-            break;
-        case SDLK_UP:
-            if (!mFixedOffset) {
-                if ( SDLK_LCTRL & modifiers)
-                    moveOffset(Vector2f(0, 30));
-                else
-                    moveOffset(Vector2f(0, 10));
-                return true;
-            }
-            break;
-        }
-    }
-    return false;
+    return true;
 }
 
 bool VideoView::keyboardCharacterEvent(unsigned int codepoint) {
-    switch (codepoint) {
-    case '-':
-        if (!mFixedScale) {
-            zoom(-1, sizeF() / 2);
-            return true;
-        }
-        break;
-    case '+':
-        if (!mFixedScale) {
-            zoom(1, sizeF() / 2);
-            return true;
-        }
-        break;
-    case 'c':
-        if (!mFixedOffset) {
-            center();
-            return true;
-        }
-        break;
-    case 'f':
-        if (!mFixedOffset && !mFixedScale) {
-            fit();
-            return true;
-        }
-        break;
-    case '1': case '2': case '3': case '4': case '5':
-    case '6': case '7': case '8': case '9':
-        if (!mFixedScale) {
-            setScaleCentered(1 << (codepoint - '1'));
-            return true;
-        }
-        break;
-    default:
-        return false;
-    }
-    return false;
+    return true;
 }
 
 Vector2i VideoView::preferredSize(SDL_Renderer* /*ctx*/) const 
