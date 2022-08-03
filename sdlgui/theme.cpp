@@ -53,16 +53,16 @@ Theme::Theme(SDL_Renderer *ctx) {
     mTextColorShadow                  = Color(0, 160);
     mIconColor                        = mTextColor;
 
-    mButtonGradientTopFocused         = Color(64, 255);
+    mButtonGradientTopFocused         = Color(64, 255); /* 标题颜色 */
     mButtonGradientBotFocused         = Color(48, 255);
-    mButtonGradientTopUnfocused       = Color(74, 255);
+    mButtonGradientTopUnfocused       = Color(75, 255);
     mButtonGradientBotUnfocused       = Color(58, 255);
     mButtonGradientTopPushed          = Color(41, 255);
     mButtonGradientBotPushed          = Color(29, 255);
 
     /* Window-related */
-    mWindowFillUnfocused              = Color(43, 255);
-    mWindowFillFocused                = Color(45, 255);
+    mWindowFillUnfocused              = Color(0x05, 0x1b, 0x4a, 255);
+    mWindowFillFocused                = Color(0x05, 0x1b, 0x4a, 255);
     mWindowTitleUnfocused             = Color(220, 160);
     mWindowTitleFocused               = Color(255, 190);
 

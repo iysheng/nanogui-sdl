@@ -13,11 +13,25 @@
 
 #pragma once
 
+#include <libavcodec/avcodec.h>
+#include "libavformat/avformat.h"
+#include <libavutil/dict.h>
+#include <libavutil/imgutils.h>
+#include <libavutil/pixfmt.h>
+#include <libswscale/swscale.h>
 #include <sdlgui/widget.h>
 #include <functional>
 
 NAMESPACE_BEGIN(sdlgui)
 
+enum VideoViewStatus
+{
+    R_VIDEO_UNINITLED,
+    R_VIDEO_RUNNING,
+    R_VIDEO_INITLED,
+};
+
+#define SRCURL_MAX    128
 /**
  * \class VideoView imageview.h sdl_gui/imageview.h
  *
@@ -29,6 +43,7 @@ public:
     VideoView(Widget* parent, SDL_Texture *texture);
     ~VideoView();
 
+    static int video_draw_handler(void *object);
     void bindImage(SDL_Texture* texture);
 
     Vector2f positionF() const { return _pos.tofloat(); }
@@ -137,6 +152,11 @@ public:
 private:
     // Helper image methods.
     void updateImageParameters();
+    SDL_Thread *m_thread;
+    char mSrcUrl[SRCURL_MAX];
+    VideoViewStatus mStatus;
+    uint8_t* m_pixels[4];
+    int m_pitch[4];
 
     // Helper drawing methods.
     void drawWidgetBorder(SDL_Renderer* ctx, const SDL_Point& ap) const;

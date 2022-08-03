@@ -27,6 +27,7 @@
 #include <sdlgui/slider.h>
 #include <sdlgui/imagepanel.h>
 #include <sdlgui/imageview.h>
+#include <sdlgui/videoview.h>
 #include <sdlgui/vscrollpanel.h>
 #include <sdlgui/colorwheel.h>
 #include <sdlgui/graph.h>
@@ -334,9 +335,13 @@ public:
 
           /* 创建一个新的 window 对象用来显示图片 */
           auto& img_window = window("Selected image", Vector2i(675, 15));
-          img_window.withLayout<GroupLayout>();
+          //img_window.withLayout<GroupLayout>();
+          img_window.setSize(Vector2i(400, 300));
 
           /* 在这个 window 上创建一个 img_window 控件 */
+#if 1
+          auto videoview = img_window.add<VideoView>(nullptr);
+#else
           auto imageView = img_window.add<ImageView>(mImagesData[0]);
 
           /* 设置这个 pop button 关联的 pop window 的大小 */
@@ -383,6 +388,7 @@ public:
                 return { stringData, textColor };
               }
           );
+#endif
         }
         /* 确定每一个部件的大小 */
         performLayout(mSDL_Renderer);
