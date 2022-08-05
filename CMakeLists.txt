@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 2.8.3)
 
 project("sdlgui")
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -16,7 +16,7 @@ include(CheckCXXCompilerFlag)
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "Setting build type to 'Release' as none was specified.")
-  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
+  set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build." FORCE)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
     "MinSizeRel" "RelWithDebInfo")
 endif()
@@ -48,7 +48,7 @@ if(MSVC)
   endif()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4244 /wd4100 /wd4101 /wd4018 /wd4201 /wd4189 /wd4457 /wd4456 /wd4245 /wd4838 /wd4389 /wd4702")
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-  CHECK_CXX_COMPILER_FLAG("-std=c++14" HAS_CPP14_FLAG)
+  #  CHECK_CXX_COMPILER_FLAG("-std=c++14" HAS_CPP14_FLAG)
   CHECK_CXX_COMPILER_FLAG("-std=c++11" HAS_CPP11_FLAG)
 
   if (HAS_CPP14_FLAG)

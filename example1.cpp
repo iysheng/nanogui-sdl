@@ -67,6 +67,9 @@ using std::endl;
 
 #undef main
 
+#define LED3000_VERSION    9u
+#define LED3000_ID         11000001u
+
 using namespace sdlgui;
 using namespace rapidjson;
 
@@ -78,6 +81,7 @@ void do_with_green_light_normal(Widget *widget, int choose)
     /* TODO change green light status */
   }
 }
+
 void do_with_green_light_mocode(Widget *widget, int choose)
 {
   std::cout << "green light normal:" << choose << std::endl;
@@ -164,7 +168,8 @@ class TestWindow : public Screen
 {
 public:
     TestWindow( SDL_Window* pwindow, int rwidth, int rheight )
-      : Screen( pwindow, Vector2i(rwidth, rheight), "SDL_gui Test")
+      : Screen( pwindow, Vector2i(rwidth, rheight), "SDL_gui Test"),
+        mFileName("/opt/led3000.json"), mFp(nullptr)
       {
         /* 设备状态窗口 */
         {
@@ -365,6 +370,133 @@ public:
     ~TestWindow() {
     }
 
+
+    void init_json_file(void)
+        {
+            char jsonBuffer[4096] = "{}";
+            mFp = fopen(mFileName.c_str(), "r");
+            if (mFp)
+            {
+              fread(jsonBuffer, sizeof(char), sizeof(jsonBuffer), mFp);
+              cout << "jsonBuffer:" << jsonBuffer << "@" << mFileName << endl;
+              if (mDocument.ParseInsitu(jsonBuffer).HasParseError())
+              {
+                std::cout << "Invalid content of " << mFileName << std::endl;
+                return;
+              }
+            }
+            else if (!mFp)
+            {
+                mFp = fopen(mFileName.c_str(), "w+");
+                assert(mFp);
+                //fwrite(jsonBuffer, sizeof(char), strlen(jsonBuffer) + 1, mFp);
+                assert(false == mDocument.ParseInsitu(jsonBuffer).HasParseError());
+            }
+
+            Document::AllocatorType& allocator = mDocument.GetAllocator();
+
+            if (mDocument.FindMember("sys_config") == mDocument.MemberEnd())
+            {
+                Value sys_config(kObjectType);
+                sys_config.AddMember("sys_version", LED3000_VERSION, allocator);
+                sys_config.AddMember("sys_id", LED3000_ID, allocator);
+                mDocument.AddMember("sys_config", sys_config, allocator);
+                cout << "Add sys_config object" << endl;
+            }
+            else
+            {
+                unsigned sys_version = Pointer("/sys_config/sys_version").Get(mDocument)->GetInt();
+                cout << "sys_version:" << sys_version / 100 << "." << sys_version % 100 << endl;
+                cout << "sys_id:" << Pointer("/sys_config/sys_id").Get(mDocument)->GetInt() << endl;
+            }
+
+            if (mDocument.MemberEnd() == mDocument.FindMember("eths"))
+            {
+                Value eth_array(kArrayType);
+                Value eth0_config(kObjectType);
+                Value eth1_config(kObjectType);
+
+                eth0_config.AddMember("name", "eth0", allocator);
+                eth0_config.AddMember("ip", "10.20.52.110", allocator);
+                eth0_config.AddMember("netmask", "255.255.255.0", allocator);
+                eth0_config.AddMember("gateway", "10.20.52.1", allocator);
+
+                eth1_config.AddMember("name", "eth1", allocator);
+                eth1_config.AddMember("ip", "192.168.100.110", allocator);
+                eth1_config.AddMember("netmask", "255.255.255.0", allocator);
+                eth1_config.AddMember("gateway", "192.168.100.1", allocator);
+
+                eth_array.PushBack(eth0_config, allocator);
+                eth_array.PushBack(eth1_config, allocator);
+
+                mDocument.AddMember("eths", eth_array, allocator);
+                cout << "Add eths array" << endl;
+            }
+            else
+            {
+             // for (auto& m : mDocument.FindMember("eths").GetObject())
+              const Value& test_eths = mDocument["eths"];
+              //for (Value::ConstValueIterator itr = test_eths.Begin(); itr != test_eths.End(); ++itr)
+              for (SizeType i = 0; i < test_eths.Size(); i++)
+              {
+                cout << test_eths[i]["name"].GetString() << endl;
+              }
+#if 0
+                printf("Type of member %s is %s\n",
+                m.name.GetString(), kTypeNames[m.value.GetType()]);
+                cout << "sys_id:" << Pointer("/eths/sys_id").Get(document)->GetString() << endl;
+#endif
+            }
+        
+            if (mDocument.MemberEnd() == mDocument.FindMember("devices"))
+            {
+                Value device_array(kArrayType);
+                Value device_config_template(kObjectType);
+                Value white_led_config(kObjectType);
+                Value green_led_config(kObjectType);
+                Value turntable_config(kObjectType);
+            
+                device_config_template.AddMember("camera_ip", "192.168.100.64", allocator);
+                white_led_config.AddMember("mode", 1, allocator);
+                white_led_config.AddMember("normal_status", 0, allocator);
+                white_led_config.AddMember("blink_freq", 1, allocator);
+                white_led_config.AddMember("mocode", "", allocator);
+            
+                green_led_config.AddMember("mode", 1, allocator);
+                green_led_config.AddMember("normal_status", 0, allocator);
+                green_led_config.AddMember("blink_freq", 1, allocator);
+                green_led_config.AddMember("mocode", "", allocator);
+            
+                turntable_config.AddMember("mode", 1, allocator);
+                turntable_config.AddMember("track_target", 0, allocator);
+            
+                device_config_template.AddMember("white_led", white_led_config, allocator);
+                device_config_template.AddMember("green_led", green_led_config, allocator);
+                device_config_template.AddMember("turntable", turntable_config, allocator);
+                Value device_config;
+            
+                for (int i = 0; i < 2; i++)
+                {
+                    /* deep copy */
+                    device_config.CopyFrom(device_config_template, allocator);
+                    device_array.PushBack(device_config, allocator);
+                    cout << "device array init:" << i << endl;
+                }
+
+                mDocument.AddMember("devices", device_array, allocator);
+                cout << "Add devices array" << endl;
+            }
+        
+            //SetValueByPointer(document, "/eths/0/ip", "1.2.3.4");
+            fclose(mFp);
+        
+            mFp = fopen(mFileName.c_str(), "w");
+            FileWriteStream os(mFp, jsonBuffer, sizeof(jsonBuffer));
+            cout << "jsonBuffer:" << jsonBuffer << "@" << mFileName.c_str() <<  endl;
+            Writer<FileWriteStream> writer(os);
+            mDocument.Accept(writer);
+            fclose(mFp);
+        }
     virtual bool keyboardEvent(int key, int scancode, int action, int modifiers)
     {
         if (Screen::keyboardEvent(key, scancode, action, modifiers))
@@ -397,7 +529,9 @@ public:
 private:
     std::vector<SDL_Texture*> mImagesData;
     int mCurrentImage;
-    Document document;
+    Document mDocument;
+    FILE *mFp;
+    std::string mFileName;
 };
 
 
@@ -483,6 +617,7 @@ int main(int /* argc */, char ** /* argv */)
 
     /* 创建了测试窗口类 */
     TestWindow *screen = new TestWindow(window, winWidth, winHeight);
+    screen->init_json_file();
 
     Fps fps;
 
