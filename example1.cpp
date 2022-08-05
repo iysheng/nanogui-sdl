@@ -36,6 +36,15 @@
 #include <sdlgui/formhelper.h>
 #include <memory>
 
+#include <rapidjson/pointer.h>
+#include <rapidjson/filereadstream.h>
+#include <rapidjson/filewritestream.h>
+#include <rapidjson/document.h>     // rapidjson's DOM-style API
+#include <rapidjson/prettywriter.h> // for stringify JSON
+#include <rapidjson/writer.h>
+#include <cstdio>
+#include <iostream>
+
 #if defined(_WIN32)
 #include <windows.h>
 #endif
@@ -59,7 +68,7 @@ using std::endl;
 #undef main
 
 using namespace sdlgui;
-
+using namespace rapidjson;
 
 void do_with_green_light_normal(Widget *widget, int choose)
 {
@@ -322,7 +331,6 @@ public:
               }
           });
 
-
           /* 加载图形到 images 这个 list */
           ListImages images = loadImageDirectory(SDL_GetRenderer(pwindow), "icons");
           /* 创建一个 popupbutton 控件,这个 widget 的 parent 是 miscwindow */
@@ -341,6 +349,14 @@ public:
 
           /* 在这个 window 上创建一个 img_window 控件 */
           auto videoview = img_window.add<VideoView>(nullptr);
+
+          auto& img2_window = window("摄像头二视频", Vector2i(675, 315));
+          /* 设置各个方向的 margin 为 0 */
+          img2_window.setLayout(new GroupLayout(0,0,0,0));
+          img2_window.setSize(Vector2i(400, 300));
+
+          /* 在这个 window 上创建一个 img2_window 控件 */
+          img2_window.add<VideoView>(nullptr);
         }
         /* 确定每一个部件的大小 */
         performLayout(mSDL_Renderer);
@@ -381,6 +397,7 @@ public:
 private:
     std::vector<SDL_Texture*> mImagesData;
     int mCurrentImage;
+    Document document;
 };
 
 
