@@ -293,6 +293,32 @@ Button * sysconfigBtb;
           devBtn->setFixedSize(Vector2i(165, 30));
         }
 
+        /* 转台功能 */
+        {
+          auto& turntableWindow = wdg<Window>("转台功能");
+
+          /* 确定了 turntableWindow 的位置 */
+          turntableWindow.withPosition({800, 600});
+          /* 创建一个新的布局 */
+          GridLayout * layout = new GridLayout(Orientation::Horizontal, 1,
+                                         Alignment::Middle, 5, 5);
+          layout->setColAlignment({ Alignment::Fill, Alignment::Fill });
+          /* 定义了这个窗口的布局 */
+          turntableWindow.setLayout(layout);
+#if 0
+          Button *devBtn = turntableWindow.add<Button>("目标检测", [&] { cout << "目标检测模式" << endl; });
+          /* 根据实际系统功能中按键大小，为了保持大小一致，修改设备选择按键大小保持一致 */
+          devBtn->setFixedSize(Vector2i(165, 30));
+          devBtn = turntableWindow.add<Button>("手动", [&] { cout << "转台手动模式" << endl; });
+          devBtn->setFixedSize(Vector2i(165, 30));
+          devBtn = turntableWindow.add<Button>("复位", [&] { cout << "复位转台" << endl; });
+          devBtn->setFixedSize(Vector2i(165, 30));
+#else
+        turntableWindow.label("")._and().button("目标检测").withFlags(Button::RadioButton)._and().button("手动").withFlags(Button::RadioButton);
+        turntableWindow.button("复位").withFlags(Button::RadioButton);
+#endif
+        }
+
         /* 小部件网格 */
         {
           auto& miscwindow = wdg<Window>("测试 window");
