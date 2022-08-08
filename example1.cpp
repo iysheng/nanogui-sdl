@@ -73,6 +73,15 @@ using std::endl;
 using namespace sdlgui;
 using namespace rapidjson;
 
+void do_with_power_off(Widget *widget, int choose)
+{
+  std::cout << "do with power off :" << choose << std::endl;
+  if (choose != 2)
+  {
+    /* TODO change green light status */
+  }
+}
+
 void do_with_green_light_normal(Widget *widget, int choose)
 {
   std::cout << "green light normal:" << choose << std::endl;
@@ -244,6 +253,45 @@ public:
           cwindow.add<Button>("白闪");
           cwindow.add<Button>("莫码");
         }
+Button * sysconfigBtb;
+        /* 系统窗口 */
+        {
+          auto& swindow = wdg<Window>("系统功能");
+
+          /* 确定了 swindow 的位置 */
+          swindow.withPosition({800, 0});
+          /* 创建一个新的布局 */
+          GridLayout * layout = new GridLayout(Orientation::Horizontal, 1,
+                                         Alignment::Middle, 5, 5);
+          layout->setColAlignment({ Alignment::Fill, Alignment::Fill });
+          //layout->setSpacing(0, 5);
+          /* 定义了这个窗口的布局 */
+          swindow.setLayout(layout);
+          swindow.add<Button>("关机", [&] {
+              msgdialog(MessageDialog::Type::Question, "关机", "确认要关机么?", "确认", "取消", do_with_power_off); });
+          sysconfigBtb = swindow.add<Button>("系统设置", [&] {
+              msgdialog(MessageDialog::Type::Choose, "系统参数配置", "准备配置参数",
+              do_with_power_off); });
+        }
+
+        /* 设备选择 */
+        {
+          auto& chooseWindow = wdg<Window>("设备选择");
+
+          /* 确定了 chooseWindow 的位置 */
+          chooseWindow.withPosition({1000, 300});
+          /* 创建一个新的布局 */
+          GridLayout * layout = new GridLayout(Orientation::Horizontal, 1,
+                                         Alignment::Middle, 5, 5);
+          layout->setColAlignment({ Alignment::Fill, Alignment::Fill });
+          /* 定义了这个窗口的布局 */
+          chooseWindow.setLayout(layout);
+          Button *devBtn = chooseWindow.add<Button>("灯光装置终端一", [&] { cout << "choose device 1" << endl; });
+          /* 根据实际系统功能中按键大小，为了保持大小一致，修改设备选择按键大小保持一致 */
+          devBtn->setFixedSize(Vector2i(165, 30));
+          devBtn = chooseWindow.add<Button>("灯光装置终端二", [&] { cout << "choose device 2" << endl; });
+          devBtn->setFixedSize(Vector2i(165, 30));
+        }
 
         /* 小部件网格 */
         {
@@ -365,6 +413,8 @@ public:
         }
         /* 确定每一个部件的大小 */
         performLayout(mSDL_Renderer);
+
+          red_debug_lite("size=%d,%d ", sysconfigBtb->size().x, sysconfigBtb->size().y);
     }
 
     ~TestWindow() {
@@ -617,7 +667,7 @@ int main(int /* argc */, char ** /* argv */)
 
     /* 创建了测试窗口类 */
     TestWindow *screen = new TestWindow(window, winWidth, winHeight);
-    screen->init_json_file();
+    //screen->init_json_file();
 
     Fps fps;
 
