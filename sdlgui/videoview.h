@@ -41,6 +41,10 @@ class  VideoView : public Widget
 {
 public:
     VideoView(Widget* parent, SDL_Texture *texture);
+    VideoView(Widget* parent, SDL_Texture *texture, const char *srcurl):VideoView(parent, texture)
+    {
+        memcpy(mSrcUrl, srcurl, strlen(srcurl) + 1);
+    };
     ~VideoView();
 
     static int video_draw_handler(void *object);
@@ -148,6 +152,8 @@ public:
 
     VideoView& withImage(SDL_Texture *texture) { bindImage(texture); return *this; }
     SDL_Texture* mTexture = nullptr;
+    
+    int setSrcUrl(const char *srcurl) {memcpy(mSrcUrl, srcurl, strlen(srcurl) + 1);return 0;}
 
 private:
     // Helper image methods.

@@ -73,6 +73,137 @@ using std::endl;
 using namespace sdlgui;
 using namespace rapidjson;
 
+void do_with_sysconfig(Widget *widget, int choose)
+{
+  std::cout << "do with sysconfig :" << choose << std::endl;
+  if (choose != 2)
+  {
+    /* TODO change green light status */
+  }
+  else
+  {
+      Window * setWindow = new Window(widget->window()->parent(), "系统参数配置");
+      Window * sysWindow = widget->window();
+      /* 标记 sysconfig winow 为 no Modal, 并修改 setWindow 为 Modal,setWindow 会提前到最前面图层 */
+      sysWindow->setModal(false);
+      setWindow->setModal(true);
+      setWindow->setLayout(new BoxLayout(Orientation::Vertical,
+                              Alignment::Middle, 0, 15));
+    
+      Widget * ethsWidget = setWindow->add<Widget>();
+      ethsWidget->setLayout(new BoxLayout(Orientation::Horizontal,
+                              Alignment::Middle, 0, 15));
+
+      Widget * configWidget = ethsWidget->add<Widget>();
+      GridLayout * layout = new GridLayout(Orientation::Horizontal, 2,
+                                     Alignment::Middle, 15, 5);
+      layout->setColAlignment({ Alignment::Maximum, Alignment::Fill });
+      layout->setSpacing(0, 10);
+      /* 定义了这个窗口的布局 */
+      configWidget->setLayout(layout);
+      configWidget->add<Label>("网卡0IP:", "sans-bold");
+      /* 创建 textBox */
+      auto* textBox = configWidget->add<TextBox>();
+      textBox->setEditable(true);
+      /* 设置控件大小 */
+      textBox->setFixedSize(Vector2i(150, 20));
+      textBox->setValue("192.168.100.110");
+      /* 设置字体大小 */
+      textBox->setFontSize(16);
+      //textBox->setFormat("[-]?[0-9]*\\.?[0-9]+");
+      textBox->setAlignment(TextBox::Alignment::Left);
+      configWidget->add<Label>("网卡0子网掩码:", "sans-bold");
+      textBox = configWidget->add<TextBox>();
+      textBox->setEditable(true);
+      textBox->setFixedSize(Vector2i(150, 20));
+      textBox->setValue("255.255.255.0");
+      textBox->setFontSize(16);
+      textBox->setAlignment(TextBox::Alignment::Left);
+      configWidget->add<Label>("网卡0网关:", "sans-bold");
+      textBox = configWidget->add<TextBox>();
+      textBox->setEditable(true);
+      textBox->setFixedSize(Vector2i(150, 20));
+      textBox->setValue("192.168.100.1");
+      textBox->setFontSize(16);
+      textBox->setAlignment(TextBox::Alignment::Left);
+    
+      Widget * eth1Widget = ethsWidget->add<Widget>();
+      layout = new GridLayout(Orientation::Horizontal, 2,
+                                     Alignment::Middle, 15, 5);
+      layout->setColAlignment({Alignment::Maximum, Alignment::Fill });
+      layout->setSpacing(0, 10);
+      /* 定义了这个窗口的布局 */
+      eth1Widget->setLayout(layout);
+      eth1Widget->add<Label>("网卡1IP:", "sans-bold");
+      textBox = eth1Widget->add<TextBox>();
+      textBox->setEditable(true);
+      textBox->setFixedSize(Vector2i(150, 20));
+      textBox->setValue("192.168.100.110");
+      textBox->setFontSize(16);
+      textBox->setAlignment(TextBox::Alignment::Left);
+      eth1Widget->add<Label>("网卡1子网掩码:", "sans-bold");
+      textBox = eth1Widget->add<TextBox>();
+      textBox->setEditable(true);
+      textBox->setFixedSize(Vector2i(150, 20));
+      textBox->setValue("255.255.255.0");
+      textBox->setFontSize(16);
+      textBox->setAlignment(TextBox::Alignment::Left);
+      eth1Widget->add<Label>("网卡1网关:", "sans-bold");
+      textBox = eth1Widget->add<TextBox>();
+      textBox->setEditable(true);
+      textBox->setFixedSize(Vector2i(150, 20));
+      textBox->setValue("192.168.100.1");
+      textBox->setFontSize(16);
+      textBox->setAlignment(TextBox::Alignment::Left);
+    
+      Widget *cameraWidget = setWindow->add<Widget>();
+      cameraWidget->setLayout(new BoxLayout(Orientation::Horizontal,
+                                      Alignment::Middle, 0, 15));
+      cameraWidget->add<Label>("摄像头1路径:", "sans-bold");
+      textBox = cameraWidget->add<TextBox>();
+      textBox->setEditable(true);
+      textBox->setFixedSize(Vector2i(350, 20));
+      textBox->setValue("rtsp://admin:jariled123@192.168.100.64");
+      textBox->setFontSize(16);
+      textBox->setAlignment(TextBox::Alignment::Left);
+
+      cameraWidget = setWindow->add<Widget>();
+      cameraWidget->setLayout(new BoxLayout(Orientation::Horizontal,
+                                      Alignment::Middle, 0, 15));
+      cameraWidget->add<Label>("摄像头2路径:", "sans-bold");
+      textBox = cameraWidget->add<TextBox>();
+      textBox->setEditable(true);
+      textBox->setFixedSize(Vector2i(350, 20));
+      textBox->setValue("rtsp://admin:jariled123@192.168.100.65");
+      textBox->setFontSize(16);
+      textBox->setAlignment(TextBox::Alignment::Left);
+
+      Widget *btWidget = setWindow->add<Widget>();
+      btWidget->setLayout(new BoxLayout(Orientation::Horizontal,
+                                      Alignment::Middle, 0, 15));
+      btWidget->add<Button>("返回")->setWidgetCallback([](Widget *widget){
+          widget->window()->dispose();
+          std::cout << "返回" << std::endl;
+      });
+      btWidget->add<Button>("确认")->setWidgetCallback([](Widget *widget){
+          Widget *wdg = widget->window()->parent()->gfind("系统设置");
+          if (wdg != nullptr)
+          {
+          Window * wnd = dynamic_cast<Window *>(wdg);
+          wnd->setModal(true);
+          widget->window()->dispose();
+          }
+          std::cout << "确认" << std::endl;
+      });
+    
+      Screen * screen = dynamic_cast<Screen *>(widget->window()->parent());
+      SDL_Renderer * render = screen->sdlRenderer();
+      screen->performLayout(render);
+      setWindow->center();
+      setWindow->requestFocus();
+  }
+}
+
 void do_with_power_off(Widget *widget, int choose)
 {
   std::cout << "do with power off :" << choose << std::endl;
@@ -271,7 +402,7 @@ Button * sysconfigBtb;
               msgdialog(MessageDialog::Type::Question, "关机", "确认要关机么?", "确认", "取消", do_with_power_off); });
           sysconfigBtb = swindow.add<Button>("系统设置", [&] {
               msgdialog(MessageDialog::Type::Choose, "系统参数配置", "准备配置参数",
-              do_with_power_off); });
+              do_with_sysconfig); });
         }
 
         /* 设备选择 */
@@ -317,6 +448,38 @@ Button * sysconfigBtb;
         turntableWindow.label("")._and().button("目标检测").withFlags(Button::RadioButton)._and().button("手动").withFlags(Button::RadioButton);
         turntableWindow.button("复位").withFlags(Button::RadioButton);
 #endif
+        }
+
+        /* 摄像头功能 */
+        {
+          auto& cameraWindow = wdg<Window>("摄像头功能");
+
+          /* 确定了 cameraWindow 的位置 */
+          cameraWindow.withPosition({1000, 600});
+          /* 创建一个新的布局 */
+          GridLayout * layout = new GridLayout(Orientation::Horizontal, 1,
+                                         Alignment::Middle, 5, 5);
+          layout->setColAlignment({ Alignment::Fill, Alignment::Fill });
+          /* 定义了这个窗口的布局 */
+          cameraWindow.setLayout(layout);
+          cameraWindow.add<Label>("摄像头一焦距")->_and().widget().withLayout<BoxLayout>(Orientation::Horizontal, Alignment::Middle, 0, 20).slider(0.5f, [](Slider* obj, float value) {
+                      if (auto* textBox = obj->gfind<TextBox>("slider-textbox"))
+                        textBox->setValue(std::to_string((int)(value * 100)));
+                    }, [](float value) { cout << "Final slider value: " << (int)(value * 100) << endl; })
+                        .withFixedWidth(80)._and()
+                 .textbox("50", "mm").withAlignment(TextBox::Alignment::Right)
+                    .withId("slider-textbox")
+                    .withFixedSize(Vector2i(60, 25))
+                    .withFontSize(20);
+          cameraWindow.add<Label>("摄像头二焦距")->_and().widget().withLayout<BoxLayout>(Orientation::Horizontal, Alignment::Middle, 0, 20).slider(0.5f, [](Slider* obj, float value) {
+                      if (auto* textBox = obj->gfind<TextBox>("slider-textbox"))
+                        textBox->setValue(std::to_string((int)(value * 100)));
+                    }, [](float value) { cout << "Final slider value: " << (int)(value * 100) << endl; })
+                        .withFixedWidth(80)._and()
+                 .textbox("50", "mm").withAlignment(TextBox::Alignment::Right)
+                    .withId("slider-textbox")
+                    .withFixedSize(Vector2i(60, 25))
+                    .withFontSize(20);
         }
 
         /* 小部件网格 */
@@ -435,7 +598,7 @@ Button * sysconfigBtb;
           img2_window.setSize(Vector2i(400, 300));
 
           /* 在这个 window 上创建一个 img2_window 控件 */
-          img2_window.add<VideoView>(nullptr);
+          img2_window.add<VideoView>(nullptr, "rtsp://admin:jariled123@192.168.100.65");
         }
         /* 确定每一个部件的大小 */
         performLayout(mSDL_Renderer);
