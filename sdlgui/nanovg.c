@@ -283,31 +283,39 @@ static NVGstate* nvg__getState(NVGcontext* ctx)
 	return &ctx->states[ctx->nstates-1];
 }
 
+/* 这个是 nvg 初始化一个上下文的核心函数 */
 NVGcontext* nvgCreateInternal(NVGparams* params)
 {
 	FONSparams fontParams;
+	/* 申请一个 NVG 上下文的内存空间 */
 	NVGcontext* ctx = (NVGcontext*)malloc(sizeof(NVGcontext));
 	int i;
 	if (ctx == NULL) goto error;
 	memset(ctx, 0, sizeof(NVGcontext));
 
+	/* 使用 params 的内容初始化 ctx */
 	ctx->params = *params;
 	for (i = 0; i < NVG_MAX_FONTIMAGES; i++)
 		ctx->fontImages[i] = 0;
 
+	/* 申请命令内存空间 */
 	ctx->commands = (float*)malloc(sizeof(float)*NVG_INIT_COMMANDS_SIZE);
 	if (!ctx->commands) goto error;
 	ctx->ncommands = 0;
 	ctx->ccommands = NVG_INIT_COMMANDS_SIZE;
 
+	/* 申请 cache 相关的内存空间 */
 	ctx->cache = nvg__allocPathCache();
 	if (ctx->cache == NULL) goto error;
 
+	/* 保存 ctx 的一次处理？ */
 	nvgSave(ctx);
+	/* 复位一个(最近的那个) ctx 状态 ?? */
 	nvgReset(ctx);
 
 	nvg__setDevicePixelRatio(ctx, 1.0f);
 
+	/* 创建纹理 */
 	if (ctx->params.renderCreate(ctx->params.userPtr) == 0) goto error;
 
 	// Init font rendering

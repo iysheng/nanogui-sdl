@@ -753,6 +753,7 @@ static void rtnvg__getUniforms(RTNVGshader *shader) {
 #endif
 }
 
+/* 创建纹理 */
 static int rtnvg__renderCreate(void *uptr) {
   RTNVGcontext *rt = (RTNVGcontext *)uptr;
   int align = 4;
@@ -2409,6 +2410,7 @@ static void rtnvg__renderDelete(void *uptr) {
 inline NVGcontext *nvgCreateRT(int flags, int w, int h, int clrColor) {
   NVGparams params;
   NVGcontext *ctx = NULL;
+  /* 初始化 RT 上下文 */
   RTNVGcontext *rt = (RTNVGcontext *)malloc(sizeof(RTNVGcontext));
   if (rt == NULL)
     goto error;
@@ -2427,14 +2429,18 @@ inline NVGcontext *nvgCreateRT(int flags, int w, int h, int clrColor) {
   params.renderStroke = rtnvg__renderStroke;
   params.renderTriangles = rtnvg__renderTriangles;
   params.renderDelete = rtnvg__renderDelete;
+  /* 将 RTNVG 关联到 params */
   params.userPtr = rt;
   params.edgeAntiAlias = flags & NVG_ANTIALIAS ? 1 : 0;
 
   rt->flags = flags;
 
+  /* 初始化这个 NANOVG 上下文的宽度和高度 */
   rt->width = w;
   rt->height = h;
+  /* 申请像素内存空间 */
   rt->pixels = (unsigned char *)malloc(rt->width * rt->height * 4);
+  /* 使用初始的颜色填充这段显示空间 */
   for (size_t i = 0; i < rt->width * rt->height; i++)
     memcpy(rt->pixels + 4 * i, &clrColor, 4);
 

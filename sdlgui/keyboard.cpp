@@ -281,6 +281,7 @@ bool Keyboard::mouseButtonEvent(const Vector2i &p, int button, bool down, int mo
             child->mouseButtonEvent(p - _pos, button, down, modifiers))
         {
             printf("get here now\n");
+			return true;
         }
     }
 
